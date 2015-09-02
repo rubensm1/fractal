@@ -30,10 +30,10 @@ if (!isset($width) || !isset($height)) {
     <tr>
         <td>
             <div class="panel panel-jquery" style="overflow: auto; margin: 10px 5px 10px 10px; width: inherit; height: inherit;">
-                <?php echo func_include_x("view/home/desenho.php", array("requisicao" => "panel")); ?>
-                <?php echo func_include_x("view/home/tempo.php", array("requisicao" => "panel")); ?>
-                <?php echo func_include_x("view/home/imagem.php", array("requisicao" => "panel")); ?>
-                <?php echo func_include_x("view/home/zoom.php", array("requisicao" => "panel")); ?>
+                <?php echo func_include_x("view/home/includes/desenho.php", array("requisicao" => "panel")); ?>
+                <?php echo func_include_x("view/home/includes/tempo.php", array("requisicao" => "panel")); ?>
+                <?php echo func_include_x("view/home/includes/imagem.php", array("requisicao" => "panel")); ?>
+                <?php echo func_include_x("view/home/includes/zoom.php", array("requisicao" => "panel")); ?>
             </div>
         </td>
         <td style="width: 70%">
@@ -48,7 +48,8 @@ if (!isset($width) || !isset($height)) {
     </tr>
 </table>
 
-<?php echo func_include_x("view/home/imagem.php", array("requisicao" => "canvas", "width" => $width, "height" => $height)); ?>
+<?php echo func_include_x("view/home/includes/imagem.php", array("requisicao" => "canvas", "width" => $width, "height" => $height)); ?>
+<?php echo func_include_x("view/home/includes/motores.php", array("requisicao" => "dialog")); ?>
 
 <script>
     var planoPrincipal = new Plano(<?php echo $width / 2; ?>,<?php echo $height / 2; ?>);
@@ -79,7 +80,7 @@ if (!isset($width) || !isset($height)) {
     dimensionar();
 
 </script>
-<?php echo func_include_x("view/home/tempo.php", array("requisicao" => "javascript")); ?>
-<?php echo func_include_x("view/home/desenho.php", array("requisicao" => "javascript")); ?>
-<?php echo func_include_x("view/home/imagem.php", array("requisicao" => "javascript", "width" => $width, "height" => $height)); ?>
-<?php echo func_include_x("view/home/zoom.php", array("requisicao" => "javascript")); ?>
+<?php echo func_include_x("view/home/includes/tempo.php", array("requisicao" => "javascript")); ?>
+<?php echo func_include_x("view/home/includes/desenho.php", array("requisicao" => "javascript")); ?>
+<?php echo func_include_x("view/home/includes/imagem.php", array("requisicao" => "javascript", "width" => $width, "height" => $height)); ?>
+<?php echo func_include_x("view/home/includes/zoom.php", array("requisicao" => "javascript")); ?>
