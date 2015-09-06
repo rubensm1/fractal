@@ -39,7 +39,7 @@ if (!isset($width) || !isset($height)) {
         <td style="width: 70%">
             <div class="panel panel-jquery" style="overflow: auto; margin: 10px 10px 10px 5px; width: inherit; height: inherit; background-color: whitesmoke;">
                 <div id="container-svg" style="height: 100%;">
-                    <svg id="palco" width="<?php echo $width; ?>px" height="<?php echo $height; ?>px" style="border:1px solid #d3d3d3; background-color: white;">
+                    <svg id="palco" width="<?php echo $width; ?>px" height="<?php echo $height; ?>px" viewBox="-<?php echo $width/2; ?> -<?php echo $height/2; ?> <?php echo $width; ?> <?php echo $height; ?>" style="border:1px solid #d3d3d3; background-color: white;">
 
                     </svg>
                 </div>
@@ -52,16 +52,10 @@ if (!isset($width) || !isset($height)) {
 <?php echo func_include_x("view/home/includes/motores.php", array("requisicao" => "dialog")); ?>
 
 <script>
-    var planoPrincipal = new Plano(<?php echo $width / 2; ?>,<?php echo $height / 2; ?>);
+    var planoPrincipal = new Plano();
     document.getElementById("palco").appendChild(planoPrincipal.getSVG());
     var caneta = new Ponto(0, ESCALA);
     var pulsante = new Pulsante(INTERVALO_TEMPO_PULSOS);
-    var motores = [];
-    function novoMotor(plano, canetaSelecionada, pontoInicial) {
-    var motor = new Motor(plano, plano, canetaSelecionada, pontoInicial);
-        motores.push(motor);
-        motor.ligar(pulsante);
-    }
 
     $('button.bt-padrao').button().css('width', 120);
     function dimensionar() {
@@ -81,6 +75,7 @@ if (!isset($width) || !isset($height)) {
 
 </script>
 <?php echo func_include_x("view/home/includes/tempo.php", array("requisicao" => "javascript")); ?>
+<?php echo func_include_x("view/home/includes/motores.php", array("requisicao" => "javascript")); ?>
 <?php echo func_include_x("view/home/includes/desenho.php", array("requisicao" => "javascript")); ?>
 <?php echo func_include_x("view/home/includes/imagem.php", array("requisicao" => "javascript", "width" => $width, "height" => $height)); ?>
 <?php echo func_include_x("view/home/includes/zoom.php", array("requisicao" => "javascript")); ?>
