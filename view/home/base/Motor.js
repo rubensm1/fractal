@@ -38,7 +38,7 @@ Motor = (function () {
         }, this.intervaloPulsos);
         this.pulso = {pulsoID: pulsoID, pulsante: pulsante};
         return pulsoID;
-    }
+    };
 
     Motor.prototype.pausar = function () {
         if (this.isLigado()) {
@@ -47,16 +47,16 @@ Motor = (function () {
         else {
 
         }
-    }
+    };
 
     Motor.prototype.desligar = function () {
         if (!this.isLigado())
             return;
         this.ponto.getSVG().remove();
         //clearInterval(this.pulsoID);
-        this.pulso.pulsante.delAcao(this.pulso.pulsoID)
+        this.pulso.pulsante.delAcao(this.pulso.pulsoID);
         this.pulso = null;
-    }
+    };
 
     Motor.prototype.mover = function () {
         var px, py;
@@ -65,7 +65,7 @@ Motor = (function () {
         this.numerador < this.fragmentos - 1 ? this.numerador++ : this.numerador = 0;
         //this.numerador > 0 ? this.numerador-- : this.numerador = this.fragmentos -1;
         this.ponto.set(px, py);
-    }
+    };
 
     /*Motor.prototype.mover = function () {
      var px, py;
@@ -90,28 +90,21 @@ Motor = (function () {
             //transform.aplicar(svgSegmento, this.plano);
             //transform.aplicar(svgSegmento, this.planoRoot.transform.baseVal.consolidate().matrix.inverse(),true);
         }
-    }
+    };
 
     Motor.prototype.isLigado = function () {
         return this.pulso != null;
-    }
+    };
 
     return Motor;
 
 })();
 
 /*
- var pulsante2 = new Pulsante(50);
+ var planoG = new Plano (0,0);
  
- var planoG = new Plano (0,100);
+ motores.novoMotor( new Motor(planoPrincipal,planoPrincipal,caneta,planoG) );
+ motores.novoMotor( new Motor(planoG,planoPrincipal,caneta,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
+ motores.novoMotor( new Motor(planoG,planoPrincipal,caneta,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
  
- motores.push( new Motor(planoPrincipal,planoPrincipal,caneta,planoG) );
- motores[0].ligar(pulsante);
- 
- motores.push( new Motor(planoG,planoPrincipal,caneta,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
- motores.push( new Motor(planoG,planoPrincipal,caneta,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
- 
- motores[1].ligar(pulsante);
- motores[2].ligar(pulsante);
- iniciado = true;
  */

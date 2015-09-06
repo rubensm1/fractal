@@ -11,10 +11,11 @@ Plano = (function () {
         var svg = document.createElementNS("http://www.w3.org/2000/svg", 'g');
         this.getSVG = function () {
             return svg;
-        }
+        };
 
         this.transform = new Transform(this);
-        this.translate(this.x, this.y, true);
+        if (this.x || this.y)
+            this.translate(this.x, this.y, true);
     }
 
     Plano.prototype.set = function (x, y) {
@@ -25,7 +26,7 @@ Plano = (function () {
             this.y = y;
 
         this.translate(this.x, this.y);
-    }
+    };
 
     Plano.prototype.translate = function (x, y, fix) {
         if (fix) {
@@ -36,7 +37,7 @@ Plano = (function () {
         }
         else
             this.transform.aplicar(this.getSVG(), this.transform.translate(x, y));
-    }
+    };
 
     Plano.prototype.rotate = function (g, fix) {
         if (fix) {
@@ -47,7 +48,7 @@ Plano = (function () {
         }
         else
             this.transform.aplicar(this.getSVG(), this.transform.rotate(g));
-    }
+    };
 
     Plano.prototype.scale = function (s, fix) {
         if (fix) {
@@ -58,7 +59,7 @@ Plano = (function () {
         }
         else
             this.transform.aplicar(this.getSVG(), this.transform.scale(s));
-    }
+    };
 
     return Plano;
 

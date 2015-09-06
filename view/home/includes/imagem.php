@@ -28,14 +28,13 @@ if (isset($requisicao)) {
                 if ($("#botao-check-pontos")[0].checked)
                     htmlSVG = $("#palco").html().replace(/>\s+/g, ">").replace(/\s+</g, "<").replace(" xlink=", " xmlns:xlink=").replace(/\shref=/g, " xlink:href=");
                 else {
-                    for (var i in motores)
-                        motores[i].ponto.getSVG().remove();
+                    motores.limparPontosPlano();
                     htmlSVG = $("#palco").html().replace(/>\s+/g, ">").replace(/\s+</g, "<").replace(" xlink=", " xmlns:xlink=").replace(/\shref=/g, " xlink:href=");
-                    for (var i in motores)
-                        planoPrincipal.getSVG().appendChild(motores[i].ponto.getSVG());
+                    motores.colocarPontosPlano();
                 }
                 $("#gerar-imagem").html("<canvas id=\"canvas\" width=\"<?php echo $width; ?>px\" height=\"<?php echo $height; ?>px\"></canvas> <img id=\"imagem\" />");
                 canvas = document.getElementById("canvas");
+                canvas.getContext("2d").translate(<?php echo $width/2; ?>,<?php echo $height/2; ?>);
                 canvg(canvas, htmlSVG);
 
                 //Convertendo canvas em png

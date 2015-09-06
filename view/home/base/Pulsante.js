@@ -20,7 +20,7 @@ Pulsante = (function () {
         this.timeoutID = setTimeout(function () {
             pulsante.acao();
         }, this.intervalo);
-    }
+    };
 
     Pulsante.prototype.iniciar = function () {
         if (this.ligado) {
@@ -29,7 +29,7 @@ Pulsante = (function () {
         }
         this.ligado = true;
         this.run();
-    }
+    };
 
     Pulsante.prototype.parar = function () {
         clearTimeout(this.timeoutID);
@@ -38,13 +38,13 @@ Pulsante = (function () {
             delete (this.acoes[i]);
         this.ligado = false;
         this.contAcoes = 0;
-    }
+    };
 
     Pulsante.prototype.pausar = function () {
         clearTimeout(this.timeoutID);
         this.timeoutID = null;
         this.ligado = false;
-    }
+    };
 
     Pulsante.prototype.novaAcao = function (funcao, deltha) {
         if (typeof funcao == "function" && typeof deltha == "number") {
@@ -54,7 +54,7 @@ Pulsante = (function () {
         }
         else
             return 0;
-    }
+    };
 
     Pulsante.prototype.delAcao = function (acaoId) {
         if (this.acoes.hasOwnProperty(acaoId))
@@ -62,7 +62,7 @@ Pulsante = (function () {
         else
             return false;
         return true;
-    }
+    };
 
     Pulsante.prototype.acao = function () {
         for (var i in this.acoes)
@@ -75,7 +75,7 @@ Pulsante = (function () {
         this.timeoutID = null;
         if (this.ligado)
             this.run();
-    }
+    };
 
     return Pulsante;
 

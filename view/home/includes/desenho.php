@@ -19,24 +19,13 @@ if (isset($requisicao)) {
             var iniciado = false;
 
             $("#botaoIn").click(function () {
-                novoMotor(planoPrincipal, caneta, new Ponto(0, ESCALA));
-                iniciado = true;
+                motores.novoMotor(planoPrincipal, caneta, new Ponto(0, ESCALA));
             });
             $("#botaoSt").click(function () {
-                for (var i in motores)
-                    motores[i].desligar();
-                motores = [];
-                iniciado = false;
+                motores.desligarTudo();
             });
             $("#botaoCl").click(function () {
-                //svg.appendChild(new Segmento (new Ponto(100,100), new Ponto(200,200)).toSVG());
-                planoPrincipal.getSVG().innerHTML = "";
-                if (iniciado) {
-                    for (var i in motores)
-                        planoPrincipal.getSVG().appendChild(motores[i].ponto.getSVG());
-                }
-                else
-                    caneta.set(0, ESCALA);
+                motores.limparPlano();
             });
         </script>
         <?php
