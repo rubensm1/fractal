@@ -9,7 +9,7 @@ Motor = (function () {
         this.caneta = caneta;
         this.ponto = pontoInicial;
 
-        this.pulso = null;
+        this.pulso = null; //{pulsoID: pulsoID, pulsante: pulsante, ordem: 1, ligado: true}
         this.intervaloPulsos = intervaloPulsos ? intervaloPulsos : INTERVALO_QUANT_PULSOS;
         this.fragmentos = fragmentos ? fragmentos : FRAGMENTOS;
         this.numerador = 0;
@@ -24,11 +24,6 @@ Motor = (function () {
         this.planoRoot.getSVG().appendChild(this.ponto.getSVG());
 
         var motor = this;
-        /*this.pulsoID = setInterval(function(){
-         motor.mover();
-         motor.desenhar();
-         motor.caneta.set(motor.ponto.x,motor.ponto.y);
-         }, this.intervaloPulsos);*/
         var pulsoID = pulsante.novaAcao(function () {
             motor.mover();
             if (motor.ponto instanceof Ponto) {
@@ -36,24 +31,25 @@ Motor = (function () {
                 motor.caneta.set(motor.ponto.x, motor.ponto.y);
             }
         }, this.intervaloPulsos);
-        this.pulso = {pulsoID: pulsoID, pulsante: pulsante};
+        this.pulso = {pulsoID: pulsoID, pulsante: pulsante, ordem: pulsante.ordenador.length -1, ligado: true};
         return pulsoID;
     };
 
     Motor.prototype.pausar = function () {
         if (this.isLigado()) {
-
+            this.pulso.pulsante.removerOrdem(this.pulso.pulsoID);
+            this.pulso.ligado = false;
         }
         else {
-
+            this.pulso.pulsante.novaOrdem(this.pulso.pulsoID, this.pulso.ordem);
+            this.pulso.ligado = true;
         }
     };
 
     Motor.prototype.desligar = function () {
-        if (!this.isLigado())
+        if (this.pulso == null)
             return;
         this.ponto.getSVG().remove();
-        //clearInterval(this.pulsoID);
         this.pulso.pulsante.delAcao(this.pulso.pulsoID);
         this.pulso = null;
     };
@@ -87,13 +83,11 @@ Motor = (function () {
             transform.pontar(this.ponto);
             var svgSegmento = new Segmento(this.caneta, this.ponto, this.cor).getSVG();
             this.planoRoot.getSVG().appendChild(svgSegmento);
-            //transform.aplicar(svgSegmento, this.plano);
-            //transform.aplicar(svgSegmento, this.planoRoot.transform.baseVal.consolidate().matrix.inverse(),true);
         }
     };
 
     Motor.prototype.isLigado = function () {
-        return this.pulso != null;
+        return this.pulso !== null && this.pulso.ligado;
     };
 
     return Motor;

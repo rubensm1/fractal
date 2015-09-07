@@ -34,7 +34,15 @@
                     data[x.name] = x.value;
                 });
                 return data;
-            }
+            };
+            /*Array.prototype.switch = function (value, index) {
+                var indexOld = this.indexOf(value);
+                if (indexOld >= 0)
+                    this.splice(indexOld, 1);
+                if (index !== undefined && index !== null)
+                    this.splice(index, 0, value);
+                return indexOld;
+            };*/
             String.prototype.capitalize = function (lower) {
                 return (lower ? this.toLowerCase() : this).replace(/(?:^|\s)\S/g, function (a) {
                     return a.toUpperCase();
