@@ -8,6 +8,7 @@ Pulsante = (function () {
         this.acoes = new Object();
         this.ligado = false;
         this.contAcoes = 0;
+        this.ordenador = new Array();
     }
 
     Pulsante.prototype.run = function () {
@@ -24,7 +25,7 @@ Pulsante = (function () {
 
     Pulsante.prototype.iniciar = function () {
         if (this.ligado) {
-            console.warn("Já está ligado!")
+            console.warn("Já está ligado!");
             return;
         }
         this.ligado = true;
@@ -37,6 +38,7 @@ Pulsante = (function () {
         for (var i in this.acoes)
             delete (this.acoes[i]);
         this.ligado = false;
+        this.ordenador = new Array();
         this.contAcoes = 0;
     };
 
@@ -47,9 +49,10 @@ Pulsante = (function () {
     };
 
     Pulsante.prototype.novaAcao = function (funcao, deltha) {
-        if (typeof funcao == "function" && typeof deltha == "number") {
+        if (typeof funcao === "function" && typeof deltha === "number") {
             this.contAcoes++;
             this.acoes[this.contAcoes] = {funcao: funcao, deltha: deltha, i: 0};
+            this.ordenador.push(this.contAcoes);
             return this.contAcoes;
         }
         else
@@ -57,26 +60,49 @@ Pulsante = (function () {
     };
 
     Pulsante.prototype.delAcao = function (acaoId) {
-        if (this.acoes.hasOwnProperty(acaoId))
+        if (this.acoes.hasOwnProperty(acaoId)) {
+            this.removerOrdem(acaoId);
             delete (this.acoes[acaoId]);
+        }
         else
             return false;
         return true;
     };
 
     Pulsante.prototype.acao = function () {
-        for (var i in this.acoes)
-            if (this.acoes[i].deltha == this.acoes[i].i) {
-                this.acoes[i].funcao();
-                this.acoes[i].i = 0;
+        for (var i in this.ordenador) {
+            if (this.acoes[this.ordenador[i]].deltha === this.acoes[this.ordenador[i]].i) {
+                this.acoes[this.ordenador[i]].funcao();
+                this.acoes[this.ordenador[i]].i = 0;
             }
             else
-                this.acoes[i].i++;
+                this.acoes[this.ordenador[i]].i++;
+        }
+        
         this.timeoutID = null;
         if (this.ligado)
             this.run();
     };
-
+    
+    Pulsante.prototype.novaOrdem = function (acaoId, ordem) {
+        if (!this.acoes.hasOwnProperty(acaoId) || ordem === undefined || ordem === null)
+            return false;
+        
+        var indexOld = this.ordenador.indexOf(acaoId);
+        if (indexOld >= 0)
+            this.ordenador.splice(indexOld, 1);
+        this.ordenador.splice(ordem, 0, acaoId);
+        
+        return true;
+    };
+    
+    Pulsante.prototype.removerOrdem = function (acaoId) {
+        var indexOld = this.ordenador.indexOf(acaoId);
+        if (indexOld >= 0)
+            this.ordenador.splice(indexOld, 1);
+        return indexOld;
+    };
+    
     return Pulsante;
 
 })();
