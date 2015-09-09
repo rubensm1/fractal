@@ -22,25 +22,25 @@ Transform = (function () {
     Transform.prototype.set = function (matrix) {
         if (matrix instanceof SVGMatrix)
             this.matrix = matrix;
-    }
+    };
 
     Transform.prototype.translate = function (x, y) {
         this.lastMatrix = Transform.MATRIX_IDENTIDADE.translate(x, y);
         return this.matrix.translate(x, y);
-    }
+    };
 
     Transform.prototype.rotate = function (g) {
         this.lastMatrix = Transform.MATRIX_IDENTIDADE.rotate(g);
         return this.matrix.rotate(g);
-    }
+    };
 
     Transform.prototype.scale = function (s) {
         this.lastMatrix = Transform.MATRIX_IDENTIDADE.scale(s);
         return this.matrix.scale(s);
-    }
+    };
 
     Transform.prototype.aplicar = function (elemento, referencia, appendar) {
-        // matrix de transforma��o
+        // matrix de transformação
         var transformMatrix;
         if (referencia == null) {
             transformMatrix = this.matrix;
@@ -54,22 +54,22 @@ Transform = (function () {
         else
             return;
 
-        // obter SVGTransform e carregar a matrix de transforma��o 
+        // obter SVGTransform e carregar a matrix de transformação 
         var svgTransform = elemento.transform.baseVal.createSVGTransformFromMatrix(transformMatrix);
 
-        // aplicar transforma��o
+        // aplicar transformação
         if (appendar)
             elemento.transform.baseVal.appendItem(svgTransform);
         else
             elemento.transform.baseVal.initialize(svgTransform);
-    }
+    };
 
     Transform.prototype.pontar = function (ponto) {
         var x = ponto.x * this.matrix.a + ponto.x * this.matrix.c + this.matrix.e;
         var y = ponto.y * this.matrix.b + ponto.y * this.matrix.d + this.matrix.f;
 
         ponto.set(x, y);
-    }
+    };
 
     return Transform;
 

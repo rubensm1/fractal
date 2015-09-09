@@ -72,10 +72,10 @@ if (!isset($width) || !isset($height)) {
     }
     window.onresize = function(){dimensionar()};
     dimensionar();
-
+    
 </script>
 <?php echo func_include_x("view/home/includes/tempo.php", array("requisicao" => "javascript")); ?>
 <?php echo func_include_x("view/home/includes/motores.php", array("requisicao" => "javascript")); ?>
 <?php echo func_include_x("view/home/includes/desenho.php", array("requisicao" => "javascript")); ?>
 <?php echo func_include_x("view/home/includes/imagem.php", array("requisicao" => "javascript", "width" => $width, "height" => $height)); ?>
-<?php echo func_include_x("view/home/includes/zoom.php", array("requisicao" => "javascript")); ?>
+<?php echo func_include_x("view/home/includes/zoom.php", array("requisicao" => "javascript", "width" => $width, "height" => $height)); ?>
