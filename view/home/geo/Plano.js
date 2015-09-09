@@ -29,14 +29,20 @@ Plano = (function () {
     };
 
     Plano.prototype.translate = function (x, y, fix) {
-        if (fix) {
+        if (typeof fix != "boolean") //Modificação sem Salvar estado
+            this.transform.aplicar(this.getSVG(), this.transform.translate(x, y));
+        else if (fix) { //modificação salvando estado e aplicando modivicação anterior sem salvar
             this.transform.set(this.transform.matrix.translate(x, y));
             this.transform.aplicar(this.getSVG());
             if (this.transform.lastMatrix)
                 this.transform.aplicar(this.getSVG(), this.transform.lastMatrix, true);
         }
-        else
-            this.transform.aplicar(this.getSVG(), this.transform.translate(x, y));
+        else { //modificação restaurando à 0,0 salvando estado e aplicando modivicação anterior sem salvar
+            this.transform.set(this.transform.matrix.translate(x - this.transform.matrix.e, y - this.transform.matrix.f));
+            this.transform.aplicar(this.getSVG());
+            if (this.transform.lastMatrix)
+                this.transform.aplicar(this.getSVG(), this.transform.lastMatrix, true);
+        }
     };
 
     Plano.prototype.rotate = function (g, fix) {

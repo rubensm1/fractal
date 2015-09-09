@@ -12,6 +12,14 @@ if (isset($requisicao)) {
             <button id="botaoScaleReset" class="botao-icon">Voltar ao Padrão</button>
             <label for="amount-scale">Scale:</label><input type="text" id="amount-scale" style="width: 60px; text-align: center" value="1x" readonly></input>
             <div id="slider-scale" style="width: calc(100% - 10px); margin: auto;"></div>
+            
+            <button id="botaoTranslateResetX" class="botao-icon">Voltar ao Padrão</button>
+            <label for="amount-translate-x">Translate X:</label><input type="text" id="amount-translate-x" style="width: 60px; text-align: center" value="0" readonly></input>
+            <div id="slider-translate-x" style="width: calc(100% - 10px); margin: auto;"></div>
+            
+            <button id="botaoTranslateResetY" class="botao-icon">Voltar ao Padrão</button>
+            <label for="amount-translate-y">Translate Y:</label><input type="text" id="amount-translate-y" style="width: 60px; text-align: center" value="0" readonly></input>
+            <div id="slider-translate-y" style="width: calc(100% - 10px); margin: auto;"></div>
         </div>
         <?php
     } else if ($requisicao == "javascript") {
@@ -29,8 +37,12 @@ if (isset($requisicao)) {
                         else
                             zoom = (z - 50) / 5;
                     }
-                    else
-                        zoom = z / 50;
+                    else {
+                        if (z >= 10)
+                            zoom = z / 50;
+                        else
+                            zoom = (z + 9) / 100;
+                    }   
                 }
                 else {
                     zoom = z;
@@ -56,8 +68,12 @@ if (isset($requisicao)) {
                         else
                             scale = (s - 50) / 5;
                     }
-                    else
-                        scale = s / 50;
+                    else {
+                        if (s >= 10)
+                            scale = s / 50;
+                        else
+                            scale = (s + 9) / 100;
+                    }
                 }
                 else {
                     scale = s;
@@ -73,8 +89,26 @@ if (isset($requisicao)) {
                 }
                 $("#amount-scale").val(scale + "x");
                 planoPrincipal.scale(scale);
+                $("#slider-translate-x").slider({
+                    min: - (<?php echo $width; ?> * scale/2 + <?php echo $width/2; ?>),
+                    max: (<?php echo $width; ?> * scale/2  + <?php echo $width/2; ?>)
+                });
+                $("#slider-translate-y").slider({
+                    min: - (<?php echo $height; ?> * scale/2 + <?php echo $height/2; ?>),
+                    max: (<?php echo $height; ?> * scale/2  + <?php echo $height/2; ?>)
+                });
             }
 
+            function setTranslate (x, y, fromSlider) {
+                if (!fromSlider) {
+                    $("#slider-translate-x").slider("value", x);
+                    $("#slider-translate-y").slider("value", y);
+                }
+                $("#amount-translate-x").val(x);
+                $("#amount-translate-y").val(y);
+                planoPrincipal.translate(x,y,false);
+            }
+            
             $("button#botaoZoomReset").button({
                 icons: {primary: "ui-icon-circle-close"},
                 text: false,
@@ -107,6 +141,41 @@ if (isset($requisicao)) {
                 max: 100,
                 slide: function (event, ui) {
                     setScale(ui.value, true);
+                }
+            });
+            
+            
+            $("button#botaoTranslateResetX").button({
+                icons: {primary: "ui-icon-circle-close"},
+                text: false,
+            }).click(function () {
+                setTranslate(0, $("#slider-translate-y").slider("value"));
+            });
+
+            $("#slider-translate-x").slider({
+                range: "min",
+                value: 0,
+                min: -<?php echo $width; ?>,
+                max: <?php echo $width; ?>,
+                slide: function (event, ui) {
+                    setTranslate(ui.value, $("#slider-translate-y").slider("value"), true);
+                }
+            });
+            
+            $("button#botaoTranslateResetY").button({
+                icons: {primary: "ui-icon-circle-close"},
+                text: false,
+            }).click(function () {
+                setTranslate($("#slider-translate-x").slider("value"), 0);
+            });
+
+            $("#slider-translate-y").slider({
+                range: "min",
+                value: 0,
+                min: -<?php echo $height; ?>,
+                max: <?php echo $height; ?>,
+                slide: function (event, ui) {
+                    setTranslate($("#slider-translate-x").slider("value"), ui.value, true);
                 }
             });
         </script>
