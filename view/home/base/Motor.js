@@ -9,7 +9,7 @@ Motor = (function () {
         this.caneta = caneta;
         this.ponto = pontoInicial;
 
-        this.pulso = null; //{pulsoID: pulsoID, pulsante: pulsante, ordem: 1, ligado: true}
+        this.pulso = null; //{pulsoID: pulsoID, pulsante: pulsante, ordemBack: 1, ligado: true}
         this.intervaloPulsos = intervaloPulsos ? intervaloPulsos : INTERVALO_QUANT_PULSOS;
         this.fragmentos = fragmentos ? fragmentos : FRAGMENTOS;
         this.numerador = 0;
@@ -31,19 +31,21 @@ Motor = (function () {
                 motor.caneta.set(motor.ponto.x, motor.ponto.y);
             }
         }, this.intervaloPulsos);
-        this.pulso = {pulsoID: pulsoID, pulsante: pulsante, ordem: pulsante.ordenador.length -1, ligado: true};
+        this.pulso = {pulsoID: pulsoID, pulsante: pulsante, ordemBack: null, ligado: true, ordem: function () {var ret = pulsante.ordenador.indexOf(pulsoID); return ret < 0 ? "-" : ret;}};
         return pulsoID;
     };
 
     Motor.prototype.pausar = function () {
         if (this.isLigado()) {
-            this.pulso.pulsante.removerOrdem(this.pulso.pulsoID);
+            this.pulso.ordemBack = this.pulso.pulsante.removerOrdem(this.pulso.pulsoID);
             this.pulso.ligado = false;
         }
         else {
-            this.pulso.pulsante.novaOrdem(this.pulso.pulsoID, this.pulso.ordem);
+            this.pulso.pulsante.novaOrdem(this.pulso.pulsoID, this.pulso.ordemBack);
+            this.pulso.ordemBack = null;
             this.pulso.ligado = true;
         }
+        return this.pulso.ligado;
     };
 
     Motor.prototype.desligar = function () {
@@ -88,6 +90,19 @@ Motor = (function () {
 
     Motor.prototype.isLigado = function () {
         return this.pulso !== null && this.pulso.ligado;
+    };
+    
+    Motor.prototype.getHTML = function () {
+        if (this.pulso === null)
+            return null;
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td value=\""+this.pulso.pulsoID+"\">"+this.pulso.pulsoID+"</td>" + 
+                "<td>"+this.pulso.ordem()+"</td>" +
+                //'<td><input type="radio" name="group1" value="Milk" /></td>' +
+                '<td><button class="botao-icon botao-select-motor-pause">Iniciar/Pausar</button></td>' +
+                '<td><button class="botao-icon botao-select-motor-edit">Editar</button></td>' +
+                '<td><button class="botao-icon botao-select-motor-remove">Remover</button></td>';
+        return tr;
     };
 
     return Motor;

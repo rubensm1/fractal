@@ -50,10 +50,9 @@ Pulsante = (function () {
 
     Pulsante.prototype.novaAcao = function (funcao, deltha) {
         if (typeof funcao === "function" && typeof deltha === "number") {
-            this.contAcoes++;
             this.acoes[this.contAcoes] = {funcao: funcao, deltha: deltha, i: 0};
             this.ordenador.push(this.contAcoes);
-            return this.contAcoes;
+            return this.contAcoes++;
         }
         else
             return 0;
