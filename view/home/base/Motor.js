@@ -2,7 +2,7 @@ var Motor;
 
 Motor = (function () {
 
-    function Motor(plano, planoRoot, caneta, pontoInicial, intervaloPulsos, fragmentos, cor, escala) {
+    function Motor(plano, planoRoot, caneta, pontoInicial, intervaloPulsos, fragmentos, cor, escala, larguraLinha) {
 
         this.plano = plano;
         this.planoRoot = planoRoot ? planoRoot : plano;
@@ -15,6 +15,7 @@ Motor = (function () {
         this.numerador = 0;
         this.cor = cor ? cor : COR;
         this.escala = escala ? escala : ESCALA;
+        this.larguraLinha = larguraLinha ? larguraLinha : LARGURA_LINHA;
     }
 
     Motor.prototype.ligar = function (pulsante) {
@@ -77,13 +78,13 @@ Motor = (function () {
 
     Motor.prototype.desenhar = function () {
         if (this.plano == this.planoRoot) {
-            var svgSegmento = new Segmento(this.caneta, this.ponto, this.cor).getSVG();
+            var svgSegmento = new Segmento(this.caneta, this.ponto, this.cor, this.larguraLinha).getSVG();
             this.plano.getSVG().appendChild(svgSegmento);
         }
         else {
             var transform = new Transform(this.plano);
             transform.pontar(this.ponto);
-            var svgSegmento = new Segmento(this.caneta, this.ponto, this.cor).getSVG();
+            var svgSegmento = new Segmento(this.caneta, this.ponto, this.cor, this.larguraLinha).getSVG();
             this.planoRoot.getSVG().appendChild(svgSegmento);
         }
     };
@@ -96,7 +97,8 @@ Motor = (function () {
         if (this.pulso === null)
             return null;
         var tr = document.createElement("tr");
-        tr.innerHTML = "<td value=\""+this.pulso.pulsoID+"\">"+this.pulso.pulsoID+"</td>" + 
+        tr.setAttribute("value", this.pulso.pulsoID);
+        tr.innerHTML = "<td>"+this.pulso.pulsoID+"</td>" + 
                 "<td>"+this.pulso.ordem()+"</td>" +
                 //'<td><input type="radio" name="group1" value="Milk" /></td>' +
                 '<td><button class="botao-icon botao-select-motor-pause">Iniciar/Pausar</button></td>' +

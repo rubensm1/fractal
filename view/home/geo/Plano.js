@@ -66,6 +66,20 @@ Plano = (function () {
         else
             this.transform.aplicar(this.getSVG(), this.transform.scale(s));
     };
+    
+    Plano.prototype.getPropSVG = function (prop) {
+        var svg = this.getSVG();
+        var valor = null;
+        switch (prop) {
+            case 'r':
+                valor = svg.hasAttribute('r') ? svg.getAttribute('r') : RAIO_PONTOS;
+                break;
+            case 'fill':
+                valor = svg.hasAttribute('fill') ? svg.getAttribute('fill') : COR_PONTOS;
+                break;
+        }
+        return valor;
+    };
 
     return Plano;
 
