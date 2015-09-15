@@ -278,49 +278,72 @@ if (isset($requisicao)) {
                     if (ponto == null)
                         return;
                     this.ponto = ponto;
-                    this.cor = ponto.getPropSVG("fill");
-                    var corInv = "rgb("+this.invertRGB(this.cor)+")";
+                    this.cor = this.toGenericRGB(ponto.getPropSVG("fill"));
+                    var cor = this.getHexRGB();
+                    var corInv = this.getHexRGB(this.getInvertRGB());
                     var colore = this;
                     this.pulsoID = this.pulsante.novaAcao(function () {
                         if (colore.pisco) {
-                            ponto.editSVG(null, colore.cor, corInv);
+                            console.log(cor);
+                            ponto.editSVG(null, cor, corInv);
                             colore.pisco = false;
                         }
                         else {
-                            ponto.editSVG(null, corInv, colore.cor);
+                            console.log(corInv);
+                            ponto.editSVG(null, corInv, cor);
                             colore.pisco = true;
                         } 
                     }, 0);
                     this.pulsante.iniciar();
                 };
                 
-                Colorante.prototype.converteEX = function (rgb) {
-                    if (typeof rgb != "string")
+                Colorante.prototype.getHexRGB = function (cor) {
+                    if (cor == null && this.cor == null)
                         return null;
-                    rgb.replace(/#/g,"");
-                    var reg = /[0-9A-Fa-f]{6}/;
-                    if (!reg.test(rgb))
-                        return rgb;
-                    return "rgb(" + parseInt(rgb.slice(0,2),16) + ", " + parseInt(rgb.slice(2,4),16) + ", " + parseInt(rgb.slice(4,6),16) +")";
+                    if (cor == null)
+                        cor = this.cor;
+                    return "#" + (cor[0] < 16 ? "0" + cor[0].toString(16) : cor[0].toString(16)) + (cor[1] < 16 ? "0" + cor[1].toString(16) : cor[1].toString(16)) + (cor[2] < 16 ? "0" + cor[2].toString(16) : cor[2].toString(16));
                 };
                 
-                Colorante.prototype.invertHexRGB = function (rgb) {
-                    if (typeof rgb != "string")
+                Colorante.prototype.getDecRGB = function (cor) {
+                    if (cor == null && this.cor == null)
                         return null;
-                    rgb.replace(/#/g,"");
-                    var reg = /[0-9A-Fa-f]{6}/;
-                    if (!reg.test(rgb))
-                        return rgb;
-                    return "rgb(" + parseInt(rgb.slice(0,2),16) + ", " + parseInt(rgb.slice(2,4),16) + ", " + parseInt(rgb.slice(4,6),16) +")";
+                    if (cor == null)
+                        cor = this.cor;
+                    return "rgb(" + cor[0] + "," + cor[1] + "," + cor[2] + ")";
                 };
                 
-                Colorante.prototype.invertDecRGB = function (rgb) {
-                    // /^[0-9]$|^1*\d\d$|^2[0-4][0-9]$|^25[0-5]$/
-                    rgb = [].slice.call(arguments).join(",").replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
-                    for (var i = 0; i < rgb.length; i++) 
-                        rgb[i] = (i === 3 ? 1 : 255) - rgb[i];
-                    return rgb.join(", ");
+                Colorante.prototype.toGenericRGB = function (rgb) {
+                    var cores = null;
+                    rgb.replace(/\s/g,"");
+                    if (/^#?[0-9A-Fa-f]{6}$/.test(rgb)) {
+                        rgb = rgb.replace(/#/g,"");
+                        cores = [parseInt(rgb.slice(0,2),16) , parseInt(rgb.slice(2,4),16) , parseInt(rgb.slice(4,6),16)];
+                    }
+                    else if (/rgb\(\d{1,3}\,\d{1,3}\,\d{1,3}\)/.test(rgb) || /rgba\(\d{1,3}\,\d{1,3}\,\d{1,3},(1|0|0.[0-9]+)\)/.test(rgb)) {
+                        //rgb = [].slice.call(arguments).join(",").replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
+                        var cores = rgb.replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
+                        for (var i = 0; i < 3; i++) {
+                            cores[i] = parseInt(cores[i]);
+                            if (!(cores[i] >= 0 && cores[i] < 256)) 
+                                return null;
+                        }
+                    }
+                    else 
+                        return null;
+                    return cores;
                 };
+                
+                Colorante.prototype.getInvertRGB = function (cor) {
+                    if (cor == null && this.cor == null)
+                        return null;
+                    if (cor == null)
+                        cor = this.cor;
+                    var corInv = [];
+                    for (var i = 0; i < 3; i++) 
+                        corInv[i] = 255 - cor[i];
+                    return corInv;
+                }
                 
                 return Colorante;
 
