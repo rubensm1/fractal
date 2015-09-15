@@ -23,24 +23,30 @@ if (isset($requisicao)) {
             </table>
         </div>
         <div id="dialog-edit-motor">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Motor:</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+            <form id="form-edit-motor">
+                <table class="table table-bordered table-former">
+                    <thead>
+                        <tr>
+                            <th>Motor:</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ordem:</td>
+                            <td><input name="ordem" type="number" value="" /></td>
+                        </tr>
+                        <tr>
+                            <td>Fragmentos:</td>
+                            <td><input name="fragmentos" type="number" value="" /></td>
+                        </tr>
+                        <tr>
+                            <td>Cor:</td>
+                            <td><input name="cor" type="color" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         </div>
         <?php
     } else if ($requisicao == "javascript") {
@@ -132,12 +138,16 @@ if (isset($requisicao)) {
                 };
                 
                 ListaMotores.prototype.selecionarLinha = function (id) {
-                    var tr = this.tbody.find("tr").has("td:first-child[value="+id+"]");
+                    var tr = this.tbody.find("tr[value="+id+"]");
                         
                     if (this.linhaSelecionada)
-                        this.tbody.find("tr").has("td:first-child[value="+this.linhaSelecionada+"]").removeClass("linha-selecionada");
+                        this.tbody.find("tr[value="+this.linhaSelecionada+"]").removeClass("linha-selecionada");
                     tr.addClass("linha-selecionada");
                     this.linhaSelecionada = id;
+                    if (id != null || id === 0)
+                        colorante.selecionarPiscante(this.lista[id].ponto);
+                    else
+                        colorante.selecionarPiscante(null);
                 };
                 
                 ListaMotores.prototype.printHTML = function () {
@@ -188,14 +198,22 @@ if (isset($requisicao)) {
             var motorEdit = new ((function () {
 
                 function EditMotor() {
+                    var _this = this;
                     this.motor = null;
                     this.dialog = $("#dialog-edit-motor").dialog({
                         title: "Editar Motor",
                         width: 600,
                         height: 400,
-                        autoOpen: false
+                        autoOpen: false,
+                        buttons: [
+                            {text: "Incerir", width: 100, type:"submit", form: "form-edit-motor", click: function(){}},
+                            {text: "Aplicar", width: 100, click: function () { _this.aplicar(); }}
+                        ]
                     });
                     this.id = this.dialog.find("th").last();
+                    this.ordem = this.dialog.find("td input[name='ordem']");
+                    this.fragmentos = this.dialog.find("td input[name='fragmentos']");
+                    this.cor = this.dialog.find("td input[name='cor']");
                 }
 
                 EditMotor.prototype.carregarMotor = function (id, motor) {
@@ -203,19 +221,110 @@ if (isset($requisicao)) {
                         this.motor = motor;
                         this.dialog.dialog("open");
                         this.id.html(id);
+                        this.ordem.val(motor.pulso.ordem());
+                        this.fragmentos.val(motor.fragmentos);
+                        this.cor.val(motor.cor);
                     }
                     else
                         throw "Motor inválido!";
                 };
                 
                 EditMotor.prototype.aplicar = function () {
-                    if (!this.motor instanceof Motor)
+                    if (!(this.motor instanceof Motor))
                         return;
+                    /*$("#duelo-form").submit ( function(ev){
+                            ev.preventDefault();
+                            var statForm = $("form#stat-form")
+                            if (statForm[0].reportValidity()) {
+                                    var id = parseInt (ajaxPadrao("duelo","incerir", $(this).serializeObject()) );
+                                    $("#duelo-form input[name='id']").val( id );
+                                    statForm.serializeArray().map(function (x) {
+                                            ajaxPadrao("duelo","stats", {"duelo": id, "tipoRecorde": x.name, "valor": x.value});
+                                    });
+                            }
+                    });*/
+                    this.motor.pulso.pulsante.novaOrdem(this.motor.pulso.pulsoID, parseInt(this.ordem.val()));
+                    this.motor.fragmentos = parseInt(this.fragmentos.val());
+                    this.motor.cor = this.cor.val();
+                    motores.printHTML();
                 };
                 
                 return EditMotor;
 
             })())(0);
+            
+            
+             var colorante = new ((function () {
+
+                function Colorante() {
+                    this.pulsante = new Pulsante(500);
+                    this.pisco = false;
+                    this.cor = null;
+                    this.ponto = null;
+                    this.pulsoID = null;
+                }
+                
+                Colorante.prototype.selecionarPiscante = function (ponto) {
+                    if (this.pulsoID != null || this.pulsoID === 0) {
+                        this.pulsante.delAcao(this.pulsoID);
+                        if (this.ponto)
+                            this.ponto.editSVG(null, this.cor);
+                        this.ponto = null;
+                        this.pisco = false;
+                        this.cor = null;
+                        this.pulsoID == null;
+                        this.pulsante.parar();
+                    }
+                    if (ponto == null)
+                        return;
+                    this.ponto = ponto;
+                    this.cor = ponto.getPropSVG("fill");
+                    var corInv = "rgb("+this.invertRGB(this.cor)+")";
+                    var colore = this;
+                    this.pulsoID = this.pulsante.novaAcao(function () {
+                        if (colore.pisco) {
+                            ponto.editSVG(null, colore.cor, corInv);
+                            colore.pisco = false;
+                        }
+                        else {
+                            ponto.editSVG(null, corInv, colore.cor);
+                            colore.pisco = true;
+                        } 
+                    }, 0);
+                    this.pulsante.iniciar();
+                };
+                
+                Colorante.prototype.converteEX = function (rgb) {
+                    if (typeof rgb != "string")
+                        return null;
+                    rgb.replace(/#/g,"");
+                    var reg = /[0-9A-Fa-f]{6}/;
+                    if (!reg.test(rgb))
+                        return rgb;
+                    return "rgb(" + parseInt(rgb.slice(0,2),16) + ", " + parseInt(rgb.slice(2,4),16) + ", " + parseInt(rgb.slice(4,6),16) +")";
+                };
+                
+                Colorante.prototype.invertHexRGB = function (rgb) {
+                    if (typeof rgb != "string")
+                        return null;
+                    rgb.replace(/#/g,"");
+                    var reg = /[0-9A-Fa-f]{6}/;
+                    if (!reg.test(rgb))
+                        return rgb;
+                    return "rgb(" + parseInt(rgb.slice(0,2),16) + ", " + parseInt(rgb.slice(2,4),16) + ", " + parseInt(rgb.slice(4,6),16) +")";
+                };
+                
+                Colorante.prototype.invertDecRGB = function (rgb) {
+                    // /^[0-9]$|^1*\d\d$|^2[0-4][0-9]$|^25[0-5]$/
+                    rgb = [].slice.call(arguments).join(",").replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
+                    for (var i = 0; i < rgb.length; i++) 
+                        rgb[i] = (i === 3 ? 1 : 255) - rgb[i];
+                    return rgb.join(", ");
+                };
+                
+                return Colorante;
+
+            })())();
             
         </script>
         <?php

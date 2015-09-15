@@ -140,3 +140,10 @@ button.botao-icon {
     /*background-color: #FF9797;*/
     background-color: #F1F1F1;    
 }
+
+table.table-former tr td:first-child, table.table-former tr th:first-child {
+    text-align: right;
+}
+table.table-former tr td:last-child, table.table-former tr th:last-child {
+    text-align: left;
+}
