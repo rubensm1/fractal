@@ -145,7 +145,7 @@ if (isset($requisicao)) {
                     tr.addClass("linha-selecionada");
                     this.linhaSelecionada = id;
                     if (id != null || id === 0)
-                        colorante.selecionarPiscante(this.lista[id].ponto);
+                        colorante.selecionarPiscante(this.lista[id]);
                     else
                         colorante.selecionarPiscante(null);
                 };
@@ -246,7 +246,12 @@ if (isset($requisicao)) {
                     this.motor.pulso.pulsante.novaOrdem(this.motor.pulso.pulsoID, parseInt(this.ordem.val()));
                     this.motor.fragmentos = parseInt(this.fragmentos.val());
                     this.motor.cor = this.cor.val();
+                    this.motor.ponto.editSVG(null, this.motor.cor);
                     motores.printHTML();
+                };
+                
+                EditMotor.prototype.ativarListeners = function () {
+                    
                 };
                 
                 return EditMotor;
@@ -254,43 +259,42 @@ if (isset($requisicao)) {
             })())(0);
             
             
-             var colorante = new ((function () {
+            var colorante = new ((function () {
 
                 function Colorante() {
                     this.pulsante = new Pulsante(500);
                     this.pisco = false;
                     this.cor = null;
-                    this.ponto = null;
+                    this.motor = null;
                     this.pulsoID = null;
                 }
                 
-                Colorante.prototype.selecionarPiscante = function (ponto) {
+                Colorante.prototype.selecionarPiscante = function (motor) {
+                    var ponto;
                     if (this.pulsoID != null || this.pulsoID === 0) {
                         this.pulsante.delAcao(this.pulsoID);
-                        if (this.ponto)
-                            this.ponto.editSVG(null, this.cor);
-                        this.ponto = null;
+                        if (this.motor)
+                            this.motor.ponto.editSVG(null, this.getHexRGB());
+                        this.motor = null;
                         this.pisco = false;
                         this.cor = null;
                         this.pulsoID == null;
                         this.pulsante.parar();
                     }
-                    if (ponto == null)
+                    if (motor == null)
                         return;
-                    this.ponto = ponto;
-                    this.cor = this.toGenericRGB(ponto.getPropSVG("fill"));
+                    this.motor = motor;
+                    this.cor = this.toGenericRGB(motor.cor);
                     var cor = this.getHexRGB();
                     var corInv = this.getHexRGB(this.getInvertRGB());
                     var colore = this;
                     this.pulsoID = this.pulsante.novaAcao(function () {
                         if (colore.pisco) {
-                            console.log(cor);
-                            ponto.editSVG(null, cor, corInv);
+                            motor.ponto.editSVG(null, cor, corInv);
                             colore.pisco = false;
                         }
                         else {
-                            console.log(corInv);
-                            ponto.editSVG(null, corInv, cor);
+                            motor.ponto.editSVG(null, corInv, cor);
                             colore.pisco = true;
                         } 
                     }, 0);
@@ -343,7 +347,7 @@ if (isset($requisicao)) {
                     for (var i = 0; i < 3; i++) 
                         corInv[i] = 255 - cor[i];
                     return corInv;
-                }
+                };
                 
                 return Colorante;
 

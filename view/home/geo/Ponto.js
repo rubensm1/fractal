@@ -30,7 +30,7 @@ Ponto = (function () {
         if (raio == null)
             raio = svg.hasAttribute('r') ? svg.getAttribute('r') : RAIO_PONTOS;
         if (cor == null)
-            cor = svg.hasAttribute('fill') ? svg.getAttribute('fill') : COR_PONTOS;
+            cor = svg.hasAttribute('fill') ? svg.getAttribute('fill') : COR;
         svg.setAttribute("r", raio);
         svg.setAttribute("fill", cor);
         if (corLinha)
@@ -47,7 +47,7 @@ Ponto = (function () {
                 valor = svg.hasAttribute('r') ? svg.getAttribute('r') : RAIO_PONTOS;
                 break;
             case 'fill':
-                valor = svg.hasAttribute('fill') ? svg.getAttribute('fill') : COR_PONTOS;
+                valor = svg.hasAttribute('fill') ? svg.getAttribute('fill') : COR;
                 break;
             case 'stroke': 
                 valor = svg.hasAttribute('stroke') ? svg.getAttribute('stroke') : null;

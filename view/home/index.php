@@ -17,7 +17,6 @@ if (!isset($width) || !isset($height)) {
     const COR = "#000000";
     const ESCALA = <?php echo $height / 2; ?>;
     const RAIO_PONTOS = 5;
-    const COR_PONTOS = "#000000";
     $("#input-dimensao-x").attr("placeholder", <?php echo $width; ?>);
     $("#input-dimensao-y").attr("placeholder", <?php echo $height; ?>);
 </script>
