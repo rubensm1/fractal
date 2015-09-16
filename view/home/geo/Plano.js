@@ -75,7 +75,7 @@ Plano = (function () {
                 valor = svg.hasAttribute('r') ? svg.getAttribute('r') : RAIO_PONTOS;
                 break;
             case 'fill':
-                valor = svg.hasAttribute('fill') ? svg.getAttribute('fill') : COR_PONTOS;
+                valor = svg.hasAttribute('fill') ? svg.getAttribute('fill') : COR;
                 break;
         }
         return valor;
