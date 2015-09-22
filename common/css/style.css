@@ -11,6 +11,9 @@ body {
 th {
     text-align: center;
 }
+output {
+    padding-top: initial;
+}
 label {
     margin: auto;
 }
@@ -46,6 +49,9 @@ label {
     background-color: rgb(99, 99, 99);
     color: white;
     text-transform: uppercase;
+}
+.table.table-bordered th output {
+    color: white;
 }
 
 .div-model-table {
@@ -143,7 +149,9 @@ button.botao-icon {
 
 table.table-former tr td:first-child, table.table-former tr th:first-child {
     text-align: right;
+    width: 25%;
 }
 table.table-former tr td:last-child, table.table-former tr th:last-child {
     text-align: left;
+    width: 75%;
 }

@@ -32,7 +32,19 @@ Motor = (function () {
                 motor.caneta.set(motor.ponto.x, motor.ponto.y);
             }
         }, this.intervaloPulsos);
-        this.pulso = {pulsoID: pulsoID, pulsante: pulsante, ordemBack: null, ligado: true, ordem: function () {var ret = pulsante.ordenador.indexOf(pulsoID); return ret < 0 ? "-" : ret;}};
+        this.pulso = { 
+            pulsoID: pulsoID, 
+            pulsante: pulsante, 
+            ordemBack: null, 
+            ligado: true, 
+            getOrdem: function () {
+                var ret = pulsante.ordenador.indexOf(pulsoID); 
+                return ret < 0 ? "-" : ret;
+            },
+            getTotal: function () {
+                return pulsante.ordenador.length -1;
+            }
+        };
         return pulsoID;
     };
 
@@ -99,7 +111,7 @@ Motor = (function () {
         var tr = document.createElement("tr");
         tr.setAttribute("value", this.pulso.pulsoID);
         tr.innerHTML = "<td>"+this.pulso.pulsoID+"</td>" + 
-                "<td>"+this.pulso.ordem()+"</td>" +
+                "<td>"+this.pulso.getOrdem()+"</td>" +
                 //'<td><input type="radio" name="group1" value="Milk" /></td>' +
                 '<td><button class="botao-icon botao-select-motor-pause">Iniciar/Pausar</button></td>' +
                 '<td><button class="botao-icon botao-select-motor-edit">Editar</button></td>' +

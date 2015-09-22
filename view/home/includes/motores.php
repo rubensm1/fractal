@@ -23,30 +23,53 @@ if (isset($requisicao)) {
             </table>
         </div>
         <div id="dialog-edit-motor">
-            <form id="form-edit-motor">
+            <!--<form id="form-edit-motor">-->
                 <table class="table table-bordered table-former">
                     <thead>
                         <tr>
                             <th>Motor:</th>
-                            <th></th>
+                            <th><output name="id"></output></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>Ordem:</td>
-                            <td><input name="ordem" type="number" value="" /></td>
+                            <td><select name="ordem"><option value="">-</option></select></td>
                         </tr>
                         <tr>
                             <td>Fragmentos:</td>
-                            <td><input name="fragmentos" type="number" value="" /></td>
+                            <td style="vertical-align: middle;">
+                                <table style="width: 100%;"><tr>
+                                    <td style="width: 35px; text-align: left;"><output name="value-fragmentos" /></td>
+                                    <td><div name="slider-fragmentos" style="width: calc(100% - 10px); margin: auto;"></div></td>
+                                </tr></table>
+                            </td>
                         </tr>
                         <tr>
                             <td>Cor:</td>
                             <td><input name="cor" type="color" /></td>
                         </tr>
+                        <tr>
+                            <td>Raio:</td>
+                            <td style="vertical-align: middle;">
+                                <table style="width: 100%;"><tr>
+                                    <td style="width: 35px; text-align: left;"><output name="value-raio" /></td>
+                                    <td><div name="slider-raio" style="width: calc(100% - 10px); margin: auto;"></div></td>
+                                </tr></table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Largura Linha:</td>
+                            <td style="vertical-align: middle;">
+                                <table style="width: 100%;"><tr>
+                                    <td style="width: 35px; text-align: left;"><output name="value-largura" /></td>
+                                    <td><div name="slider-largura" style="width: calc(100% - 10px); margin: auto;"></div></td>
+                                </tr></table>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
-            </form>
+            <!--</form>-->
         </div>
         <?php
     } else if ($requisicao == "javascript") {
@@ -206,27 +229,67 @@ if (isset($requisicao)) {
                         height: 400,
                         autoOpen: false,
                         buttons: [
-                            {text: "Incerir", width: 100, type:"submit", form: "form-edit-motor", click: function(){}},
-                            {text: "Aplicar", width: 100, click: function () { _this.aplicar(); }}
+                            //{text: "Incerir", width: 100, type:"submit", form: "form-edit-motor", click: function(){}},
+                            {text: "Novo", width: 100, click: function () { _this.reset(); }}
                         ]
                     });
-                    this.id = this.dialog.find("th").last();
-                    this.ordem = this.dialog.find("td input[name='ordem']");
-                    this.fragmentos = this.dialog.find("td input[name='fragmentos']");
-                    this.cor = this.dialog.find("td input[name='cor']");
+                    this.idOutput = this.dialog.find("th output[name='id']");
+                    this.ordemSelect = this.dialog.find("td select[name='ordem']");
+                    this.fragmentosOutput = this.dialog.find("td output[name='value-fragmentos']");
+                    this.fragmentosSlider = this.dialog.find("td div[name='slider-fragmentos']").slider({
+                        range: "min",
+                        min: 2,
+                        max: 1000
+                    });
+                    this.corInput = this.dialog.find("td input[name='cor']");
+                    this.raioOutput = this.dialog.find("td output[name='value-raio']");
+                    this.raioSlider = this.dialog.find("td div[name='slider-raio']").slider({
+                        range: "min",
+                        min: 1,
+                        max: <?php echo ($height > $width ? $height : $width); ?>
+                    });
+                    this.larguraOutput = this.dialog.find("td output[name='value-largura']");
+                    this.larguraSlider = this.dialog.find("td div[name='slider-largura']").slider({
+                        range: "min",
+                        min: 1,
+                        max: 30
+                    });
                 }
 
                 EditMotor.prototype.carregarMotor = function (id, motor) {
                     if (motor instanceof Motor) {
+                        this.desativarListeners();
                         this.motor = motor;
                         this.dialog.dialog("open");
-                        this.id.html(id);
-                        this.ordem.val(motor.pulso.ordem());
-                        this.fragmentos.val(motor.fragmentos);
-                        this.cor.val(motor.cor);
+                        this.idOutput.val(id);
+                        this.atualizarListaOrdem(motor.pulso.getTotal());
+                        this.ordemSelect.val(motor.pulso.getOrdem());
+                        this.fragmentosOutput.val(motor.fragmentos);
+                        this.fragmentosSlider.slider("value", motor.fragmentos);
+                        this.corInput.val(motor.cor);
+                        this.raioOutput.val(motor.escala);
+                        this.raioSlider.slider("value", motor.escala);
+                        this.larguraOutput.val(motor.larguraLinha);
+                        this.larguraSlider.slider("value", motor.larguraLinha * 10);
+                        this.ativarListeners();
                     }
                     else
                         throw "Motor inválido!";
+                };
+                
+                EditMotor.prototype.reset = function () {
+                    this.desativarListeners();
+                    this.motor = null;
+                    this.idOutput.val("");
+                    //this.atualizarListaOrdem(motor.pulso.getTotal());
+                    this.ordemSelect.val("-");
+                    this.fragmentosOutput.val(FRAGMENTOS);
+                    this.fragmentosSlider.slider("value", FRAGMENTOS);
+                    this.corInput.val(COR);
+                    this.raioOutput.val(ESCALA);
+                    this.raioSlider.slider("value", ESCALA);
+                    this.larguraOutput.val(LARGURA_LINHA);
+                    this.larguraSlider.slider("value", LARGURA_LINHA*10);
                 };
                 
                 EditMotor.prototype.aplicar = function () {
@@ -243,15 +306,71 @@ if (isset($requisicao)) {
                                     });
                             }
                     });*/
-                    this.motor.pulso.pulsante.novaOrdem(this.motor.pulso.pulsoID, parseInt(this.ordem.val()));
-                    this.motor.fragmentos = parseInt(this.fragmentos.val());
-                    this.motor.cor = this.cor.val();
+                    this.motor.pulso.pulsante.novaOrdem(this.motor.pulso.pulsoID, parseInt(this.ordemSelect.val()));
+                    this.motor.fragmentos = parseInt(this.fragmentosInput.val());
+                    this.motor.cor = this.corInput.val();
                     this.motor.ponto.editSVG(null, this.motor.cor);
                     motores.printHTML();
                 };
                 
+                EditMotor.prototype.atualizarListaOrdem = function (n) {
+                    this.ordemSelect.html("");
+                    var html = "<option value=\"\">-</option>";
+                    for (var i = 1; i <= n; i++)
+                        html += "<option value=\""+i+"\">"+i+"</option>";
+                    this.ordemSelect.html(html);
+                };
+                
                 EditMotor.prototype.ativarListeners = function () {
-                    
+                    var _this = this;
+                    this.ordemSelect.bind("change", function (){
+                        var valor = parseInt(this.value);
+                        //if (isNaN(valor))
+                            console.log(valor);
+                    });
+                    this.fragmentosSlider.slider({
+                        slide: function (event, ui) {
+                            _this.fragmentosOutput.val(ui.value);
+                            _this.motor.fragmentos = parseInt(ui.value);
+                        }
+                    });
+                    this.corInput.bind("change", function (){
+                        _this.motor.cor = this.value;
+                        _this.motor.ponto.editSVG(null, this.value);
+                    });
+                    this.raioSlider.slider({
+                        slide: function (event, ui) {
+                            _this.raioOutput.val(ui.value);
+                            _this.motor.escala = parseInt(ui.value);
+                        }
+                    });
+                    this.larguraSlider.slider({
+                        slide: function (event, ui) {
+                            _this.larguraOutput.val(parseInt(ui.value)/10);
+                            _this.motor.larguraLinha = parseInt(ui.value)/10;
+                        }
+                    });
+                };
+                
+                EditMotor.prototype.desativarListeners = function () {
+                    var _this = this;
+                    this.ordemSelect.unbind("change");
+                    this.fragmentosSlider.slider({
+                        slide: function (event, ui) {
+                            _this.fragmentosOutput.val(ui.value);
+                        }
+                    });
+                    this.corInput.unbind("change");
+                    this.raioSlider.slider({
+                        slide: function (event, ui) {
+                            _this.raioOutput.val(ui.value);
+                        }
+                    });
+                    this.larguraSlider.slider({
+                        slide: function (event, ui) {
+                            _this.larguraOutput.val(parseInt(ui.value)/10);
+                        }
+                    });
                 };
                 
                 return EditMotor;
