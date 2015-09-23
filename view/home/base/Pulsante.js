@@ -84,7 +84,7 @@ Pulsante = (function () {
     };
     
     Pulsante.prototype.novaOrdem = function (acaoId, ordem) {
-        if (!this.acoes.hasOwnProperty(acaoId) || ordem === undefined || ordem === null)
+        if (!this.acoes.hasOwnProperty(acaoId) || ordem === undefined || ordem === null || ordem > this.ordenador.length)
             return false;
         
         var indexOld = this.ordenador.indexOf(acaoId);

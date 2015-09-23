@@ -48,15 +48,17 @@ Motor = (function () {
         return pulsoID;
     };
 
-    Motor.prototype.pausar = function () {
+    Motor.prototype.pausar = function (param) {
         if (this.isLigado()) {
             this.pulso.ordemBack = this.pulso.pulsante.removerOrdem(this.pulso.pulsoID);
             this.pulso.ligado = false;
         }
         else {
-            this.pulso.pulsante.novaOrdem(this.pulso.pulsoID, this.pulso.ordemBack);
-            this.pulso.ordemBack = null;
-            this.pulso.ligado = true;
+            var newOrdem = param && typeof param == "number" ? param : (this.pulso.ordemBack ? this.pulso.ordemBack : this.pulso.pulsante.ordenador.length);
+            if (this.pulso.pulsante.novaOrdem(this.pulso.pulsoID, newOrdem)) {
+                this.pulso.ordemBack = null;
+                this.pulso.ligado = true;
+            }
         }
         return this.pulso.ligado;
     };

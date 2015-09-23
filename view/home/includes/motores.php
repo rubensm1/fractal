@@ -124,10 +124,10 @@ if (isset($requisicao)) {
                     this.printHTML();
                 };
                 
-                ListaMotores.prototype.pausarMotor = function (id) {
+                ListaMotores.prototype.pausarMotor = function (id, param) {
                     if (!this.lista.hasOwnProperty(id))
                         throw "Motor não encontrado!";
-                    this.lista[id].pausar();
+                    this.lista[id].pausar(param);
                     this.printHTML();
                 };
                 
@@ -230,7 +230,16 @@ if (isset($requisicao)) {
                         autoOpen: false,
                         buttons: [
                             //{text: "Incerir", width: 100, type:"submit", form: "form-edit-motor", click: function(){}},
-                            {text: "Novo", width: 100, click: function () { _this.reset(); }}
+                            {text: "Novo", name: "bt-new-clear", width: 100, click: function () {
+                                    var texto = $(this).parent().find("button[name='bt-new-clear'] span");
+                                    if (texto.text() == "Novo") { 
+                                        _this.reset();
+                                        texto.text("Criar");
+                                    }
+                                    else {
+                                        texto.text("Novo");
+                                    }
+                                }}
                         ]
                     });
                     this.idOutput = this.dialog.find("th output[name='id']");
@@ -261,6 +270,7 @@ if (isset($requisicao)) {
                         this.desativarListeners();
                         this.motor = motor;
                         this.dialog.dialog("open");
+                        this.dialog.parent().find("button[name='bt-new-clear'] span").text("Novo");
                         this.idOutput.val(id);
                         this.atualizarListaOrdem(motor.pulso.getTotal());
                         this.ordemSelect.val(motor.pulso.getOrdem());
@@ -291,6 +301,21 @@ if (isset($requisicao)) {
                     this.larguraOutput.val(LARGURA_LINHA);
                     this.larguraSlider.slider("value", LARGURA_LINHA*10);
                 };
+                
+                /*EditMotor.prototype.novo = function () {
+                    //this.desativarListeners();
+                    this.motor = null;
+                    this.idOutput.val("");
+                    //this.atualizarListaOrdem(motor.pulso.getTotal());
+                    this.ordemSelect.val("-");
+                    this.fragmentosOutput.val(FRAGMENTOS);
+                    this.fragmentosSlider.slider("value", FRAGMENTOS);
+                    this.corInput.val(COR);
+                    this.raioOutput.val(ESCALA);
+                    this.raioSlider.slider("value", ESCALA);
+                    this.larguraOutput.val(LARGURA_LINHA);
+                    this.larguraSlider.slider("value", LARGURA_LINHA*10);
+                };*/
                 
                 EditMotor.prototype.aplicar = function () {
                     if (!(this.motor instanceof Motor))
