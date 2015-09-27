@@ -8,15 +8,16 @@ if (!isset($width) || !isset($height)) {
 
 <script type="text/javascript">
     //Padrões
-    const DESLOCAMENTO_X = 0;
-    const DELSOCAMENTO_Y = 0;
-    const INTERVALO_TEMPO_PULSOS = 100;
-    const INTERVALO_QUANT_PULSOS = 0;
-    const FRAGMENTOS = 50;
-    const LARGURA_LINHA = 1;
-    const COR = "#000000";
-    const ESCALA = <?php echo ($height < $width ? $height/2 : $width/2); ?>;
-    const RAIO_PONTOS = 5;
+    var DESLOCAMENTO_X = 0;
+    var DELSOCAMENTO_Y = 0;
+    var INTERVALO_TEMPO_PULSOS = 100;
+    var INTERVALO_QUANT_PULSOS = 0;
+    var FRAGMENTOS = 50;
+    var LARGURA_LINHA = 1;
+    var COR = "#000000";
+    var ESCALA = <?php echo ($height < $width ? $height/2 : $width/2); ?>;
+    var RAIO_PONTOS = 5;
+    var SENTIDO = false;
     $("#input-dimensao-x").attr("placeholder", <?php echo $width; ?>);
     $("#input-dimensao-y").attr("placeholder", <?php echo $height; ?>);
 </script>

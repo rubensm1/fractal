@@ -2,7 +2,7 @@ var Motor;
 
 Motor = (function () {
 
-    function Motor(plano, planoRoot, caneta, pontoInicial, intervaloPulsos, fragmentos, cor, escala, larguraLinha) {
+    function Motor(plano, planoRoot, caneta, pontoInicial, intervaloPulsos, fragmentos, cor, escala, larguraLinha, sentido) {
 
         this.plano = plano;
         this.planoRoot = planoRoot ? planoRoot : plano;
@@ -16,6 +16,7 @@ Motor = (function () {
         this.cor = cor ? cor : COR;
         this.escala = escala ? escala : ESCALA;
         this.larguraLinha = larguraLinha ? larguraLinha : LARGURA_LINHA;
+        this.sentido = typeof sentido == "boolean" ? sentido : SENTIDO;
     }
 
     Motor.prototype.ligar = function (pulsante) {
@@ -32,7 +33,7 @@ Motor = (function () {
                 motor.caneta.set(motor.ponto.x, motor.ponto.y);
             }
         }, this.intervaloPulsos);
-        this.pulso = { 
+        this.pulso = {
             pulsoID: pulsoID, 
             pulsante: pulsante, 
             ordemBack: null, 
@@ -62,6 +63,21 @@ Motor = (function () {
         }
         return this.pulso.ligado;
     };
+    
+    Motor.prototype.mudarOrdem = function (ordem) {
+        if (ordem && typeof ordem == "number" && ordem < this.pulso.pulsante.ordenador.length) {
+            if (this.isLigado()) 
+                this.pulso.pulsante.novaOrdem(this.pulso.pulsoID, ordem);
+            else 
+                this.pausar(ordem);
+            return true;
+        }
+        else if (isNaN(ordem)) {
+            this.pausar();
+            return true;
+        }
+        return false;
+    };
 
     Motor.prototype.desligar = function () {
         if (this.pulso == null)
@@ -75,8 +91,10 @@ Motor = (function () {
         var px, py;
         px = this.escala * Math.sin(2 * Math.PI * this.numerador / this.fragmentos);
         py = this.escala * Math.cos(2 * Math.PI * this.numerador / this.fragmentos);
-        this.numerador < this.fragmentos - 1 ? this.numerador++ : this.numerador = 0;
-        //this.numerador > 0 ? this.numerador-- : this.numerador = this.fragmentos -1;
+        if (this.sentido)
+            this.numerador > 0 ? this.numerador-- : this.numerador = this.fragmentos -1;
+        else    
+            this.numerador < this.fragmentos - 1 ? this.numerador++ : this.numerador = 0;
         this.ponto.set(px, py);
     };
 
@@ -91,6 +109,8 @@ Motor = (function () {
      }*/
 
     Motor.prototype.desenhar = function () {
+        if (this.larguraLinha <= 0)
+            return;
         if (this.plano == this.planoRoot) {
             var svgSegmento = new Segmento(this.caneta, this.ponto, this.cor, this.larguraLinha).getSVG();
             this.plano.getSVG().appendChild(svgSegmento);
@@ -114,6 +134,7 @@ Motor = (function () {
         tr.setAttribute("value", this.pulso.pulsoID);
         tr.innerHTML = "<td>"+this.pulso.pulsoID+"</td>" + 
                 "<td>"+this.pulso.getOrdem()+"</td>" +
+                "<td>"+this.ponto.constructor.name+"</td>" +
                 //'<td><input type="radio" name="group1" value="Milk" /></td>' +
                 '<td><button class="botao-icon botao-select-motor-pause">Iniciar/Pausar</button></td>' +
                 '<td><button class="botao-icon botao-select-motor-edit">Editar</button></td>' +

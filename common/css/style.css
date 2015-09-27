@@ -155,3 +155,12 @@ table.table-former tr td:last-child, table.table-former tr th:last-child {
     text-align: left;
     width: 75%;
 }
+
+#dialog-edit-motor div.ui-buttonset span.ui-button-text {
+    padding: 0px;
+    width: 110px;
+}
+
+select:disabled {
+    color: graytext;
+}
