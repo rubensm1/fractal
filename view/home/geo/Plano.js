@@ -6,13 +6,17 @@ Plano = (function () {
         //ponto de origem
         this.x = x ? x : 0;
         this.y = y ? y : 0;
-
-
+        
+        
         var svg = document.createElementNS("http://www.w3.org/2000/svg", 'g');
         this.getSVG = function () {
             return svg;
         };
-
+        
+        this.origem = new Ponto();
+        this.origem.editSVG(10, "#000000", "#ffffff", 0.25);
+        svg.appendChild(this.origem.getSVG());
+        
         this.transform = new Transform(this);
         if (this.x || this.y)
             this.translate(this.x, this.y, true);
@@ -79,6 +83,10 @@ Plano = (function () {
                 break;
         }
         return valor;
+    };
+    
+    Plano.prototype.editSVG = function (raio, cor, corLinha, transparencia) {
+        this.origem.editSVG(raio,cor,corLinha,transparencia);
     };
 
     return Plano;

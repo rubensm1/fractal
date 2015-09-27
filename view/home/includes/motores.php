@@ -14,6 +14,7 @@ if (isset($requisicao)) {
                     <tr>
                         <th>ID</th>
                         <th>Ordem</th>
+                        <th>Tipo</th>
                         <th>Pausar</th>
                         <th>Editar</th>
                         <th>Remover</th>
@@ -32,6 +33,10 @@ if (isset($requisicao)) {
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td>Tipo:</td>
+                            <td><select name="tipo"><option value="Ponto">Ponto</option><option value="Plano">Plano</option></select></td>
+                        </tr>
                         <tr>
                             <td>Ordem:</td>
                             <td><select name="ordem"><option value="">-</option></select></td>
@@ -67,6 +72,15 @@ if (isset($requisicao)) {
                                 </tr></table>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Sentido:</td>
+                            <td style="vertical-align: middle;">
+                                <div name="radio-sentidos">
+                                    <input type="radio" value="true" id="radio-sentido-horario" name="radio-sentido"><label for="radio-sentido-horario">Horário</label>
+                                    <input type="radio" value="false" id="radio-sentido-antihorario" name="radio-sentido"><label for="radio-sentido-antihorario">Anti-horário</label>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             <!--</form>-->
@@ -81,6 +95,7 @@ if (isset($requisicao)) {
                 function ListaMotores(planoPrincipal, pulsante) {
                     var _this = this;
                     this.lista = [];
+                    this.planos = [];
                     this.iniciado = false;
                     this.planoPrincipal = planoPrincipal;
                     this.pulsante = pulsante;
@@ -102,10 +117,16 @@ if (isset($requisicao)) {
 
                 ListaMotores.prototype.novoMotor = function (param, canetaSelecionada, pontoInicial) {
                     var motor;
-                    if (param instanceof Motor)
+                    if (param instanceof Motor) {
                         motor = param;
-                    else if (param instanceof Plano)
+                        if (motor.ponto instanceof Plano)
+                            this.planos.push(motor.ponto);
+                    }
+                    else if (param instanceof Plano){
                         motor = new Motor(param, param, canetaSelecionada, pontoInicial);
+                        if (pontoInicial instanceof Plano)
+                            this.planos.push(pontoInicial);
+                    }
                     else 
                         throw "Parâmetro Ilegal: " + param;
                     motor.ligar(this.pulsante);
@@ -140,12 +161,14 @@ if (isset($requisicao)) {
                 };
                 
                 ListaMotores.prototype.limparPontosPlano = function () {
+                    this.planoPrincipal.origem.getSVG().remove();
                     for (var i in this.lista)
                         if (this.planoPrincipal == this.lista[i].planoRoot)
                             this.lista[i].ponto.getSVG().remove();
                 };
                 
                 ListaMotores.prototype.colocarPontosPlano = function () {
+                    this.planoPrincipal.getSVG().appendChild(this.planoPrincipal.origem.getSVG());
                     for (var i in this.lista)
                         if (this.planoPrincipal == this.lista[i].planoRoot)
                             this.planoPrincipal.getSVG().appendChild(this.lista[i].ponto.getSVG());
@@ -156,8 +179,10 @@ if (isset($requisicao)) {
                     this.planoPrincipal.getSVG().innerHTML = "";
                     if (this.iniciado) 
                         this.colocarPontosPlano();
-                    else
+                    else {
                         caneta.set(0, ESCALA);
+                        this.planoPrincipal.getSVG().appendChild(this.planoPrincipal.origem.getSVG());
+                    }
                 };
                 
                 ListaMotores.prototype.selecionarLinha = function (id) {
@@ -186,6 +211,7 @@ if (isset($requisicao)) {
                         }).click(function () {
                             _this.linhaSelecionada = id;
                             _this.pausarMotor(id);
+                            motorEdit.atualizarInterface();
                         });
                         $(btEdit).button({
                             icons: {primary: "ui-icon-circle-close"},
@@ -204,11 +230,26 @@ if (isset($requisicao)) {
                             _this.selecionarLinha(id);
                         });
                     };
-                    for (var i in this.lista) {
-                        var tr = this.lista[i].getHTML();
+                    var tr;
+                    for (var i in this.lista) { 
+                        tr = this.lista[i].getHTML();
                         this.tbody.append(tr);
                         aplicarFuncoes(i, tr);
                     }
+                    tr = document.createElement("tr");
+                    tr.innerHTML = "<td colspan=\"6\"><button class=\"botao-icon botao-new-motor\">Novo</button></td>";
+                    this.tbody.append(tr);
+                    $(tr).find("button.botao-new-motor").button({
+                        icons: {primary: "ui-icon-circle-plus"},
+                        text: false
+                    }).click(function () {
+                        _this.selecionarLinha(null);
+                        motorEdit.reset();
+                    });
+                    $(tr).click(function (){
+                        _this.selecionarLinha(null);
+                    });
+                    
                     this.selecionarLinha(this.linhaSelecionada);
                 };
                 
@@ -230,6 +271,9 @@ if (isset($requisicao)) {
                         autoOpen: false,
                         buttons: [
                             //{text: "Incerir", width: 100, type:"submit", form: "form-edit-motor", click: function(){}},
+                            {text: "Salvar Padrão", name: "bt-redefinir", width: 150, click: function (){
+                                    _this.redefinirPadrao();
+                                }},
                             {text: "Novo", name: "bt-new-clear", width: 100, click: function () {
                                     var texto = $(this).parent().find("button[name='bt-new-clear'] span");
                                     if (texto.text() == "Novo") { 
@@ -237,12 +281,14 @@ if (isset($requisicao)) {
                                         texto.text("Criar");
                                     }
                                     else {
+                                        _this.novo();
                                         texto.text("Novo");
                                     }
                                 }}
                         ]
                     });
                     this.idOutput = this.dialog.find("th output[name='id']");
+                    this.tipoSelect = this.dialog.find("td select[name='tipo']");
                     this.ordemSelect = this.dialog.find("td select[name='ordem']");
                     this.fragmentosOutput = this.dialog.find("td output[name='value-fragmentos']");
                     this.fragmentosSlider = this.dialog.find("td div[name='slider-fragmentos']").slider({
@@ -260,8 +306,13 @@ if (isset($requisicao)) {
                     this.larguraOutput = this.dialog.find("td output[name='value-largura']");
                     this.larguraSlider = this.dialog.find("td div[name='slider-largura']").slider({
                         range: "min",
-                        min: 1,
+                        min: 0,
                         max: 30
+                    });
+                    this.sentidoRadio = this.dialog.find("td div[name='radio-sentidos']").buttonset();
+                    //this.sentidoRadio = this.dialog.find("td div[name='radio-sentidos'] input[type='radio']");
+                    this.tipoSelect.bind("change", function (){
+                        _this.setModo(this.value);
                     });
                 }
 
@@ -272,26 +323,45 @@ if (isset($requisicao)) {
                         this.dialog.dialog("open");
                         this.dialog.parent().find("button[name='bt-new-clear'] span").text("Novo");
                         this.idOutput.val(id);
-                        this.atualizarListaOrdem(motor.pulso.getTotal());
-                        this.ordemSelect.val(motor.pulso.getOrdem());
-                        this.fragmentosOutput.val(motor.fragmentos);
-                        this.fragmentosSlider.slider("value", motor.fragmentos);
-                        this.corInput.val(motor.cor);
-                        this.raioOutput.val(motor.escala);
-                        this.raioSlider.slider("value", motor.escala);
-                        this.larguraOutput.val(motor.larguraLinha);
-                        this.larguraSlider.slider("value", motor.larguraLinha * 10);
+                        this.atualizarInterface();
                         this.ativarListeners();
                     }
                     else
                         throw "Motor inválido!";
                 };
                 
+                EditMotor.prototype.atualizarInterface = function () {
+                    if (this.motor) {
+                        this.atualizarListaOrdem(this.motor.pulso.getTotal());
+                        this.tipoSelect.val(this.motor.ponto.constructor.name);
+                        this.tipoSelect.prop("disabled",true);
+                        this.ordemSelect.val(this.motor.pulso.getOrdem());
+                        this.fragmentosOutput.val(this.motor.fragmentos);
+                        this.fragmentosSlider.slider("value", this.motor.fragmentos);
+                        this.corInput.val(this.motor.cor);
+                        this.raioOutput.val(this.motor.escala);
+                        this.raioSlider.slider("value", this.motor.escala);
+                        this.larguraOutput.val(this.motor.larguraLinha);
+                        this.larguraSlider.slider("value", this.motor.larguraLinha * 10);
+                        this.sentidoRadio.find("input[type='radio']").removeAttr('checked').prop('checked', false);
+                        this.sentidoRadio.find("input[type='radio'][value='"+this.motor.sentido+"']").attr('checked', 'checked').prop('checked', true);
+                        this.sentidoRadio.buttonset("refresh");
+                        this.sentidoRadio.find("label[for='"+(this.motor.sentido ? "radio-sentido-horario" : "radio-sentido-antihorario")+"']").addClass("ui-state-active");
+                        this.setModo(this.motor.ponto.constructor.name);
+                    }
+                    //else
+                        //this.reset();
+                };
+                
                 EditMotor.prototype.reset = function () {
                     this.desativarListeners();
                     this.motor = null;
+                    this.dialog.dialog("open");
+                    this.dialog.parent().find("button[name='bt-new-clear'] span").text("Criar");
                     this.idOutput.val("");
                     //this.atualizarListaOrdem(motor.pulso.getTotal());
+                    this.tipoSelect.val("Ponto");
+                    this.tipoSelect.prop("disabled",false);
                     this.ordemSelect.val("-");
                     this.fragmentosOutput.val(FRAGMENTOS);
                     this.fragmentosSlider.slider("value", FRAGMENTOS);
@@ -300,22 +370,32 @@ if (isset($requisicao)) {
                     this.raioSlider.slider("value", ESCALA);
                     this.larguraOutput.val(LARGURA_LINHA);
                     this.larguraSlider.slider("value", LARGURA_LINHA*10);
+                    this.sentidoRadio.find("input[type='radio']").removeAttr('checked').prop('checked', false);
+                    this.sentidoRadio.find("input[type='radio'][value='"+SENTIDO+"']").attr('checked', 'checked').prop('checked', true);
+                    this.sentidoRadio.buttonset("refresh");
+                    this.sentidoRadio.find("label[for='"+(SENTIDO ? "radio-sentido-horario" : "radio-sentido-antihorario")+"']").addClass("ui-state-active");
+                    this.setModo("Ponto");
                 };
                 
-                /*EditMotor.prototype.novo = function () {
-                    //this.desativarListeners();
-                    this.motor = null;
-                    this.idOutput.val("");
-                    //this.atualizarListaOrdem(motor.pulso.getTotal());
-                    this.ordemSelect.val("-");
-                    this.fragmentosOutput.val(FRAGMENTOS);
-                    this.fragmentosSlider.slider("value", FRAGMENTOS);
-                    this.corInput.val(COR);
-                    this.raioOutput.val(ESCALA);
-                    this.raioSlider.slider("value", ESCALA);
-                    this.larguraOutput.val(LARGURA_LINHA);
-                    this.larguraSlider.slider("value", LARGURA_LINHA*10);
-                };*/
+                EditMotor.prototype.novo = function () {
+                    var motor = new Motor(
+                        planoPrincipal,
+                        planoPrincipal,
+                        caneta, 
+                        (this.tipoSelect.val() == "Plano" ? new Plano(0,0) : new Ponto(0, parseInt(this.raioOutput.val())) ),
+                        0,
+                        parseInt(this.fragmentosOutput.val()),
+                        (this.tipoSelect.val() == "Plano" ? "#000000" :  this.corInput.val()),
+                        parseInt(this.raioOutput.val()),
+                        (this.tipoSelect.val() == "Plano" ? 1 : parseFloat(this.larguraOutput.val())),
+                        JSON.parse(this.sentidoRadio.find("input[type='radio']:checked").val())
+                    );
+                    motores.novoMotor(motor);
+                    this.idOutput.val(motor.pulso.pulsoID);
+                    this.motor = motor;
+                    this.atualizarInterface();
+                    this.dialog.parent().find("button[name='bt-new-clear'] span").text("Novo");
+                };
                 
                 EditMotor.prototype.aplicar = function () {
                     if (!(this.motor instanceof Motor))
@@ -338,9 +418,30 @@ if (isset($requisicao)) {
                     motores.printHTML();
                 };
                 
+                EditMotor.prototype.setModo = function (modo) {
+                    if (modo == "Ponto") {
+                        this.corInput.parent().parent().show();
+                        this.larguraSlider.parent().parent().parent().parent().parent().parent().show();
+                        this.dialog.parent().find("button[name='bt-redefinir']").show();
+                    }
+                    else if (modo == "Plano") {
+                        this.corInput.parent().parent().hide();
+                        this.larguraSlider.parent().parent().parent().parent().parent().parent().hide();
+                        this.dialog.parent().find("button[name='bt-redefinir']").hide();
+                    }
+                };
+                
+                EditMotor.prototype.redefinirPadrao = function () {
+                    FRAGMENTOS = parseInt(this.fragmentosOutput.val());
+                    COR = this.corInput.val();
+                    ESCALA = parseInt(this.raioOutput.val());
+                    LARGURA_LINHA = parseFloat(this.larguraOutput.val());
+                    SENTIDO = JSON.parse(this.sentidoRadio.find("input[type='radio']:checked").val());
+                };
+                
                 EditMotor.prototype.atualizarListaOrdem = function (n) {
                     this.ordemSelect.html("");
-                    var html = "<option value=\"\">-</option>";
+                    var html = "<option value=\"-\">-</option>";
                     for (var i = 1; i <= n; i++)
                         html += "<option value=\""+i+"\">"+i+"</option>";
                     this.ordemSelect.html(html);
@@ -350,8 +451,8 @@ if (isset($requisicao)) {
                     var _this = this;
                     this.ordemSelect.bind("change", function (){
                         var valor = parseInt(this.value);
-                        //if (isNaN(valor))
-                            console.log(valor);
+                        _this.motor.mudarOrdem(valor);
+                        motores.printHTML();
                     });
                     this.fragmentosSlider.slider({
                         slide: function (event, ui) {
@@ -375,6 +476,9 @@ if (isset($requisicao)) {
                             _this.motor.larguraLinha = parseInt(ui.value)/10;
                         }
                     });
+                    this.sentidoRadio.find("input[type='radio']").bind("click", function () {
+                        _this.motor.sentido = JSON.parse(this.value);
+                    });
                 };
                 
                 EditMotor.prototype.desativarListeners = function () {
@@ -396,6 +500,7 @@ if (isset($requisicao)) {
                             _this.larguraOutput.val(parseInt(ui.value)/10);
                         }
                     });
+                    this.sentidoRadio.find("input[type='radio']").unbind("click");
                 };
                 
                 return EditMotor;
@@ -414,7 +519,7 @@ if (isset($requisicao)) {
                 }
                 
                 Colorante.prototype.selecionarPiscante = function (motor) {
-                    var ponto;
+                    var _this = this;
                     if (this.pulsoID != null || this.pulsoID === 0) {
                         this.pulsante.delAcao(this.pulsoID);
                         if (this.motor)
@@ -429,17 +534,15 @@ if (isset($requisicao)) {
                         return;
                     this.motor = motor;
                     this.cor = this.toGenericRGB(motor.cor);
-                    var cor = this.getHexRGB();
-                    var corInv = this.getHexRGB(this.getInvertRGB());
-                    var colore = this;
                     this.pulsoID = this.pulsante.novaAcao(function () {
-                        if (colore.pisco) {
-                            motor.ponto.editSVG(null, cor, corInv);
-                            colore.pisco = false;
+                        _this.cor = _this.toGenericRGB(motor.cor);
+                        if (_this.pisco) {
+                            motor.ponto.editSVG(null, _this.getHexRGB(), _this.getHexRGB(_this.getInvertRGB()));
+                            _this.pisco = false;
                         }
                         else {
-                            motor.ponto.editSVG(null, corInv, cor);
-                            colore.pisco = true;
+                            motor.ponto.editSVG(null, _this.getHexRGB(_this.getInvertRGB()), _this.getHexRGB());
+                            _this.pisco = true;
                         } 
                     }, 0);
                     this.pulsante.iniciar();
@@ -497,6 +600,7 @@ if (isset($requisicao)) {
 
             })())();
             
+            motores.printHTML();
         </script>
         <?php
     }

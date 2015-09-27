@@ -3,8 +3,8 @@ var Ponto;
 Ponto = (function () {
 
     function Ponto(x, y) {
-        this.x = x;
-        this.y = y;
+        this.x = x ? x : 0;
+        this.y = y ? y : 0;
 
         var svg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
         this.getSVG = function () {
@@ -25,7 +25,7 @@ Ponto = (function () {
         svg.setAttribute("cy", this.y);
     };
 
-    Ponto.prototype.editSVG = function (raio, cor, corLinha) {
+    Ponto.prototype.editSVG = function (raio, cor, corLinha, transparencia) {
         var svg = this.getSVG();
         if (raio == null)
             raio = svg.hasAttribute('r') ? svg.getAttribute('r') : RAIO_PONTOS;
@@ -37,6 +37,11 @@ Ponto = (function () {
             svg.setAttribute("stroke", corLinha);
         else if(svg.hasAttribute("stroke"))
             svg.removeAttribute('stroke');
+        if (typeof transparencia == "number") 
+            svg.setAttribute("opacity", transparencia);
+        //else if(svg.hasAttribute("opacity"))
+            //svg.removeAttribute('opacity');
+        
     };
     
     Ponto.prototype.getPropSVG = function (prop) {
