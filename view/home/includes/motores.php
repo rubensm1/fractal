@@ -38,6 +38,10 @@ if (isset($requisicao)) {
                             <td><select name="tipo"><option value="Ponto">Ponto</option><option value="Plano">Plano</option></select></td>
                         </tr>
                         <tr>
+                            <td>Espaço:</td>
+                            <td><select name="espaco"><option value="0">Raiz</option></select></td>
+                        </tr>
+                        <tr>
                             <td>Ordem:</td>
                             <td><select name="ordem"><option value="">-</option></select></td>
                         </tr>
@@ -95,9 +99,10 @@ if (isset($requisicao)) {
                 function ListaMotores(planoPrincipal, pulsante) {
                     var _this = this;
                     this.lista = [];
-                    this.planos = [];
                     this.iniciado = false;
                     this.planoPrincipal = planoPrincipal;
+                    this.planos = [planoPrincipal];
+                    this.arvoreControle = new Arvore(0, planoPrincipal);
                     this.pulsante = pulsante;
                     this.dialog = $("#dialog-motores").dialog({
                         title: "Motores",
@@ -117,20 +122,17 @@ if (isset($requisicao)) {
 
                 ListaMotores.prototype.novoMotor = function (param, canetaSelecionada, pontoInicial) {
                     var motor;
-                    if (param instanceof Motor) {
+                    if (param instanceof Motor) 
                         motor = param;
-                        if (motor.ponto instanceof Plano)
-                            this.planos.push(motor.ponto);
-                    }
-                    else if (param instanceof Plano){
-                        motor = new Motor(param, param, canetaSelecionada, pontoInicial);
-                        if (pontoInicial instanceof Plano)
-                            this.planos.push(pontoInicial);
-                    }
+                    else if (param instanceof Plano)
+                        motor = new Motor(param, this.planoPrincipal, canetaSelecionada, pontoInicial);
                     else 
                         throw "Parâmetro Ilegal: " + param;
                     motor.ligar(this.pulsante);
                     this.lista[motor.pulso.pulsoID] = motor;
+                    if (motor.ponto instanceof Plano)
+                        this.planos[motor.pulso.pulsoID] = motor.ponto;
+                    this.arvoreControle.insert(new Arvore(motor.pulso.pulsoID, motor.ponto), this.planos.indexOf(motor.plano));
                     this.iniciado = true;
                     this.printHTML();
                 };
@@ -138,8 +140,19 @@ if (isset($requisicao)) {
                 ListaMotores.prototype.desligarMotor = function (id) {
                     if (!this.lista.hasOwnProperty(id))
                         throw "Motor não encontrado!";
+                        
+                    if (motorEdit.motor != null && motorEdit.motor.pulso.pulsoID == id) { 
+                        motorEdit.dialog.dialog("close");
+                        motorEdit.atualizarListaOrdem();
+                        motorEdit.atualizarListaEspacos();
+                    }
+                    
                     this.lista[id].desligar();
                     delete(this.lista[id]);
+                    this.arvoreControle.delete(id);
+                    if (this.planos.hasOwnProperty(id))
+                        delete(this.planos[id]);
+                    
                     if (this.lista.length == 0)
                         this.iniciado = false;
                     this.printHTML();
@@ -153,13 +166,16 @@ if (isset($requisicao)) {
                 };
                 
                 ListaMotores.prototype.desligarTudo = function (){
+                    motorEdit.dialog.dialog("close");
                     for (var i in this.lista)
                         this.lista[i].desligar();
                     this.lista = [];
+                    this.planos = [this.planoPrincipal];
+                    this.arvoreControle = new Arvore(0, this.planoPrincipal);
                     this.iniciado = false;
                     this.printHTML();
                 };
-                
+                                
                 ListaMotores.prototype.limparPontosPlano = function () {
                     this.planoPrincipal.origem.getSVG().remove();
                     for (var i in this.lista)
@@ -264,6 +280,7 @@ if (isset($requisicao)) {
                 function EditMotor() {
                     var _this = this;
                     this.motor = null;
+                    
                     this.dialog = $("#dialog-edit-motor").dialog({
                         title: "Editar Motor",
                         width: 600,
@@ -289,6 +306,7 @@ if (isset($requisicao)) {
                     });
                     this.idOutput = this.dialog.find("th output[name='id']");
                     this.tipoSelect = this.dialog.find("td select[name='tipo']");
+                    this.espacoSelect = this.dialog.find("td select[name='espaco']");
                     this.ordemSelect = this.dialog.find("td select[name='ordem']");
                     this.fragmentosOutput = this.dialog.find("td output[name='value-fragmentos']");
                     this.fragmentosSlider = this.dialog.find("td div[name='slider-fragmentos']").slider({
@@ -332,9 +350,11 @@ if (isset($requisicao)) {
                 
                 EditMotor.prototype.atualizarInterface = function () {
                     if (this.motor) {
-                        this.atualizarListaOrdem(this.motor.pulso.getTotal());
+                        this.atualizarListaOrdem();
+                        this.atualizarListaEspacos();
                         this.tipoSelect.val(this.motor.ponto.constructor.name);
                         this.tipoSelect.prop("disabled",true);
+                        this.espacoSelect.val(motores.planos.indexOf(this.motor.plano));
                         this.ordemSelect.val(this.motor.pulso.getOrdem());
                         this.fragmentosOutput.val(this.motor.fragmentos);
                         this.fragmentosSlider.slider("value", this.motor.fragmentos);
@@ -359,9 +379,11 @@ if (isset($requisicao)) {
                     this.dialog.dialog("open");
                     this.dialog.parent().find("button[name='bt-new-clear'] span").text("Criar");
                     this.idOutput.val("");
-                    //this.atualizarListaOrdem(motor.pulso.getTotal());
+                    //this.atualizarListaOrdem();
+                    this.atualizarListaEspacos();
                     this.tipoSelect.val("Ponto");
-                    this.tipoSelect.prop("disabled",false);
+                    this.tipoSelect.prop("disabled", false);
+                    this.espacoSelect.val(0);
                     this.ordemSelect.val("-");
                     this.fragmentosOutput.val(FRAGMENTOS);
                     this.fragmentosSlider.slider("value", FRAGMENTOS);
@@ -379,7 +401,7 @@ if (isset($requisicao)) {
                 
                 EditMotor.prototype.novo = function () {
                     var motor = new Motor(
-                        planoPrincipal,
+                        motores.planos[parseInt(this.espacoSelect.val())],
                         planoPrincipal,
                         caneta, 
                         (this.tipoSelect.val() == "Plano" ? new Plano(0,0) : new Ponto(0, parseInt(this.raioOutput.val())) ),
@@ -395,6 +417,7 @@ if (isset($requisicao)) {
                     this.motor = motor;
                     this.atualizarInterface();
                     this.dialog.parent().find("button[name='bt-new-clear'] span").text("Novo");
+                    this.ativarListeners();
                 };
                 
                 EditMotor.prototype.aplicar = function () {
@@ -440,18 +463,54 @@ if (isset($requisicao)) {
                 };
                 
                 EditMotor.prototype.atualizarListaOrdem = function (n) {
+                    var oldVal = this.ordemSelect.val();
+                    if(!n)
+                        n = this.motor.pulso.getTotal();
                     this.ordemSelect.html("");
                     var html = "<option value=\"-\">-</option>";
                     for (var i = 1; i <= n; i++)
                         html += "<option value=\""+i+"\">"+i+"</option>";
                     this.ordemSelect.html(html);
+                    this.ordemSelect.val(oldVal);
+                };
+                
+                EditMotor.prototype.atualizarListaEspacos = function () {
+                    var oldVal = this.espacoSelect.val();
+                    this.espacoSelect.html("");
+                    var html = "<option value=\"0\">Raiz</option>";
+                    if (this.motor) {
+                        var myId = parseInt(this.idOutput.val());
+                        for (var i in motores.planos) {
+                            if (i != 0) {
+                                if (this.motor.ponto instanceof Ponto || (myId != i && !motores.arvoreControle.isAncestral(myId, i)) )
+                                    html += "<option value=\""+i+"\">"+i+"</option>";
+                            }
+                            else 
+                                continue;
+                        }
+                    }
+                    else {
+                        for (var i in motores.planos) {
+                            if (i != 0)
+                                html += "<option value=\""+i+"\">"+i+"</option>";
+                            else 
+                                continue;
+                        }
+                    }
+                    this.espacoSelect.html(html);
+                    this.espacoSelect.val(oldVal);
                 };
                 
                 EditMotor.prototype.ativarListeners = function () {
                     var _this = this;
+                    this.espacoSelect.bind("change", function (){
+                        var valor = parseInt(this.value);
+                        _this.motor.plano = motores.planos[valor];
+                    });
                     this.ordemSelect.bind("change", function (){
                         var valor = parseInt(this.value);
                         _this.motor.mudarOrdem(valor);
+                        _this.atualizarListaOrdem();
                         motores.printHTML();
                     });
                     this.fragmentosSlider.slider({
@@ -483,6 +542,7 @@ if (isset($requisicao)) {
                 
                 EditMotor.prototype.desativarListeners = function () {
                     var _this = this;
+                    this.espacoSelect.unbind("change");
                     this.ordemSelect.unbind("change");
                     this.fragmentosSlider.slider({
                         slide: function (event, ui) {

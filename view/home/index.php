@@ -27,6 +27,7 @@ if (!isset($width) || !isset($height)) {
 <script type="text/javascript" src="view/home/geo/Plano.js"></script>
 <script type="text/javascript" src="view/home/base/Pulsante.js"></script>
 <script type="text/javascript" src="view/home/base/Motor.js"></script>
+<script type="text/javascript" src="view/home/base/Arvore.js"></script>
 
 <table id="area-total-corpo" style="height: 100%; width: 100%;">
     <tr>
