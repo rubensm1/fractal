@@ -3,23 +3,23 @@ if (isset($requisicao)) {
 
     if ($requisicao == "panel") {
         ?>
-        <div class="panel-heading">Zoom</div>
+        <div class="panel-heading">Dimensionamento</div>
         <div class="panel-body">
             <button id="botaoZoomReset" class="botao-icon">Voltar ao Padrão</button>
-            <label for="amount-zoom">Zoom:</label><input type="text" id="amount-zoom" style="width: 60px; text-align: center" value="1x" readonly></input>
-            <div id="slider-zoom" style="width: calc(100% - 10px); margin: auto;"></div>
+            <label for="amount-zoom">Zoom:</label><input type="text" id="amount-zoom" style="width: 60px; text-align: center" value="1x" readonly />
+            <input id="range-zoom" type="range" style="width: calc(100% - 10px); margin: auto;" />
 
             <button id="botaoScaleReset" class="botao-icon">Voltar ao Padrão</button>
-            <label for="amount-scale">Scale:</label><input type="text" id="amount-scale" style="width: 60px; text-align: center" value="1x" readonly></input>
-            <div id="slider-scale" style="width: calc(100% - 10px); margin: auto;"></div>
+            <label for="amount-scale">Scale:</label><input type="text" id="amount-scale" style="width: 60px; text-align: center" value="1x" readonly />
+            <input id="range-scale" type="range" style="width: calc(100% - 10px); margin: auto;" />
             
             <button id="botaoTranslateResetX" class="botao-icon">Voltar ao Padrão</button>
-            <label for="amount-translate-x">Translate X:</label><input type="text" id="amount-translate-x" style="width: 60px; text-align: center" value="0" readonly></input>
-            <div id="slider-translate-x" style="width: calc(100% - 10px); margin: auto;"></div>
+            <label for="amount-translate-x">Translate X:</label><input type="text" id="amount-translate-x" style="width: 60px; text-align: center" value="0" readonly/>
+            <input id="range-translate-x" type="range" style="width: calc(100% - 10px); margin: auto;" />
             
             <button id="botaoTranslateResetY" class="botao-icon">Voltar ao Padrão</button>
-            <label for="amount-translate-y">Translate Y:</label><input type="text" id="amount-translate-y" style="width: 60px; text-align: center" value="0" readonly></input>
-            <div id="slider-translate-y" style="width: calc(100% - 10px); margin: auto;"></div>
+            <label for="amount-translate-y">Translate Y:</label><input type="text" id="amount-translate-y" style="width: 60px; text-align: center" value="0" readonly/>
+            <input id="range-translate-y" type="range" style="width: calc(100% - 10px); margin: auto;" />
         </div>
         <?php
     } else if ($requisicao == "javascript") {
@@ -30,6 +30,7 @@ if (isset($requisicao)) {
             var scale = 1;
 
             function setZoom(z, fromSlider) {
+                var ranz = document.getElementById("range-zoom");
                 if (fromSlider) {
                     if (z > 50) {
                         if (z < 60)
@@ -54,13 +55,14 @@ if (isset($requisicao)) {
                     }
                     else
                         z = z * 50;
-                    $("#slider-zoom").slider("value", z);
+                    ranz.value = z;
                 }
                 $("#amount-zoom").val(zoom + "x");
                 $("#container-svg").css("zoom", zoom);
             }
 
             function setScale(s, fromSlider) {
+                var rans = document.getElementById("range-scale");
                 if (fromSlider) {
                     if (s > 50) {
                         if (s < 60)
@@ -85,24 +87,24 @@ if (isset($requisicao)) {
                     }
                     else
                         s = s * 50;
-                    $("#slider-scale").slider("value", s);
+                    rans.value = s;
                 }
                 $("#amount-scale").val(scale + "x");
                 planoPrincipal.scale(scale);
-                $("#slider-translate-x").slider({
-                    min: - (<?php echo $width; ?> * scale/2 + <?php echo $width/2; ?>),
-                    max: (<?php echo $width; ?> * scale/2  + <?php echo $width/2; ?>)
-                });
-                $("#slider-translate-y").slider({
-                    min: - (<?php echo $height; ?> * scale/2 + <?php echo $height/2; ?>),
-                    max: (<?php echo $height; ?> * scale/2  + <?php echo $height/2; ?>)
-                });
+                with (document.getElementById("range-translate-x")) {
+                    setAttribute("min", - (<?php echo $width; ?> * scale/2 + <?php echo $width/2; ?>) );
+                    setAttribute("max", (<?php echo $width; ?> * scale/2  + <?php echo $width/2; ?>) );
+                }
+                with (document.getElementById("range-translate-y")) {
+                    setAttribute("min", - (<?php echo $height; ?> * scale/2 + <?php echo $height/2; ?>) );
+                    setAttribute("max", (<?php echo $height; ?> * scale/2  + <?php echo $height/2; ?>) );
+                }
             }
 
             function setTranslate (x, y, fromSlider) {
                 if (!fromSlider) {
-                    $("#slider-translate-x").slider("value", x);
-                    $("#slider-translate-y").slider("value", y);
+                    document.getElementById("range-translate-x").value = x;
+                    document.getElementById("range-translate-y").value = y;
                 }
                 $("#amount-translate-x").val(x);
                 $("#amount-translate-y").val(y);
@@ -115,69 +117,63 @@ if (isset($requisicao)) {
             }).click(function () {
                 setZoom(1);
             });
-
-            $("#slider-zoom").slider({
-                range: "min",
-                value: 50,
-                min: 1,
-                max: 100,
-                slide: function (event, ui) {
-                    setZoom(ui.value, true);
-                }
-            });
-
+            
+            with (document.getElementById("range-zoom")) {
+                setAttribute("min", 1);
+                setAttribute("max", 100);
+                setAttribute("value", 50);
+                oninput = function () {
+                    setZoom(parseInt(this.value), true);
+                };
+            }
 
             $("button#botaoScaleReset").button({
                 icons: {primary: "ui-icon-circle-close"},
-                text: false,
+                text: false
             }).click(function () {
                 setScale(1);
             });
-
-            $("#slider-scale").slider({
-                range: "min",
-                value: 50,
-                min: 1,
-                max: 100,
-                slide: function (event, ui) {
-                    setScale(ui.value, true);
-                }
-            });
             
+            with (document.getElementById("range-scale")) {
+                setAttribute("min", 1);
+                setAttribute("max", 100);
+                setAttribute("value", 50);
+                oninput = function () {
+                    setScale(parseInt(this.value), true);
+                };
+            }
             
             $("button#botaoTranslateResetX").button({
                 icons: {primary: "ui-icon-circle-close"},
-                text: false,
+                text: false
             }).click(function () {
-                setTranslate(0, $("#slider-translate-y").slider("value"));
+                setTranslate(0, parseInt(document.getElementById("range-translate-y").value));
             });
-
-            $("#slider-translate-x").slider({
-                range: "min",
-                value: 0,
-                min: -<?php echo $width; ?>,
-                max: <?php echo $width; ?>,
-                slide: function (event, ui) {
-                    setTranslate(ui.value, $("#slider-translate-y").slider("value"), true);
-                }
-            });
+            
+            with (document.getElementById("range-translate-x")) {
+                setAttribute("min", -<?php echo $width; ?>);
+                setAttribute("max", <?php echo $width; ?>);
+                setAttribute("value", 0);
+                oninput = function () {
+                    setTranslate(parseInt(this.value), parseInt(document.getElementById("range-translate-y").value), true);
+                };
+            }
             
             $("button#botaoTranslateResetY").button({
                 icons: {primary: "ui-icon-circle-close"},
-                text: false,
+                text: false
             }).click(function () {
-                setTranslate($("#slider-translate-x").slider("value"), 0);
+                setTranslate(parseInt(document.getElementById("range-translate-x").value), 0);
             });
-
-            $("#slider-translate-y").slider({
-                range: "min",
-                value: 0,
-                min: -<?php echo $height; ?>,
-                max: <?php echo $height; ?>,
-                slide: function (event, ui) {
-                    setTranslate($("#slider-translate-x").slider("value"), ui.value, true);
-                }
-            });
+            
+            with (document.getElementById("range-translate-y")) {
+                setAttribute("min", -<?php echo $height; ?>);
+                setAttribute("max", <?php echo $height; ?>);
+                setAttribute("value", 0);
+                oninput = function () {
+                    setTranslate(parseInt(document.getElementById("range-translate-x").value), parseInt(this.value), true);
+                };
+            }
         </script>
         <?php
     }
