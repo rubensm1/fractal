@@ -22,8 +22,11 @@ Motor = (function () {
     Motor.prototype.ligar = function (pulsante) {
         if (this.isLigado() || !(pulsante instanceof Pulsante))
             return;
-
-        this.planoRoot.getSVG().appendChild(this.ponto.getSVG());
+        
+        if (this.ponto instanceof Ponto)
+            this.planoRoot.getSVG().appendChild(this.ponto.getSVG());
+        else if (this.ponto instanceof Plano)
+            this.plano.getSVG().appendChild(this.ponto.getSVG());
 
         var motor = this;
         var pulsoID = pulsante.novaAcao(function () {

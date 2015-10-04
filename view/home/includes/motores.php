@@ -50,7 +50,7 @@ if (isset($requisicao)) {
                             <td style="vertical-align: middle;">
                                 <table style="width: 100%;"><tr>
                                     <td style="width: 35px; text-align: left;"><output name="value-fragmentos" /></td>
-                                    <td><div name="slider-fragmentos" style="width: calc(100% - 10px); margin: auto;"></div></td>
+                                    <td><input name="range-fragmentos" min="2" max="1000" type="range" style="width: calc(100% - 10px); margin: auto;" /></td>
                                 </tr></table>
                             </td>
                         </tr>
@@ -63,7 +63,7 @@ if (isset($requisicao)) {
                             <td style="vertical-align: middle;">
                                 <table style="width: 100%;"><tr>
                                     <td style="width: 35px; text-align: left;"><output name="value-raio" /></td>
-                                    <td><div name="slider-raio" style="width: calc(100% - 10px); margin: auto;"></div></td>
+                                    <td><input name="range-raio" min="0" type="range" style="width: calc(100% - 10px); margin: auto;" /></td>
                                 </tr></table>
                             </td>
                         </tr>
@@ -72,7 +72,7 @@ if (isset($requisicao)) {
                             <td style="vertical-align: middle;">
                                 <table style="width: 100%;"><tr>
                                     <td style="width: 35px; text-align: left;"><output name="value-largura" /></td>
-                                    <td><div name="slider-largura" style="width: calc(100% - 10px); margin: auto;"></div></td>
+                                    <td><input name="range-largura" min="0" max="30" type="range" style="width: calc(100% - 10px); margin: auto;" /></td>
                                 </tr></table>
                             </td>
                         </tr>
@@ -309,24 +309,12 @@ if (isset($requisicao)) {
                     this.espacoSelect = this.dialog.find("td select[name='espaco']");
                     this.ordemSelect = this.dialog.find("td select[name='ordem']");
                     this.fragmentosOutput = this.dialog.find("td output[name='value-fragmentos']");
-                    this.fragmentosSlider = this.dialog.find("td div[name='slider-fragmentos']").slider({
-                        range: "min",
-                        min: 2,
-                        max: 1000
-                    });
+                    this.fragmentosRange = this.dialog.find("td input[name='range-fragmentos']");
                     this.corInput = this.dialog.find("td input[name='cor']");
                     this.raioOutput = this.dialog.find("td output[name='value-raio']");
-                    this.raioSlider = this.dialog.find("td div[name='slider-raio']").slider({
-                        range: "min",
-                        min: 1,
-                        max: <?php echo ($height > $width ? $height : $width); ?>
-                    });
+                    this.raioRange = this.dialog.find("td input[name='range-raio']").attr("max", <?php echo ($height > $width ? $height : $width); ?>);
                     this.larguraOutput = this.dialog.find("td output[name='value-largura']");
-                    this.larguraSlider = this.dialog.find("td div[name='slider-largura']").slider({
-                        range: "min",
-                        min: 0,
-                        max: 30
-                    });
+                    this.larguraRange = this.dialog.find("td input[name='range-largura']");
                     this.sentidoRadio = this.dialog.find("td div[name='radio-sentidos']").buttonset();
                     //this.sentidoRadio = this.dialog.find("td div[name='radio-sentidos'] input[type='radio']");
                     this.tipoSelect.bind("change", function (){
@@ -357,12 +345,12 @@ if (isset($requisicao)) {
                         this.espacoSelect.val(motores.planos.indexOf(this.motor.plano));
                         this.ordemSelect.val(this.motor.pulso.getOrdem());
                         this.fragmentosOutput.val(this.motor.fragmentos);
-                        this.fragmentosSlider.slider("value", this.motor.fragmentos);
+                        this.fragmentosRange.val(this.motor.fragmentos);
                         this.corInput.val(this.motor.cor);
                         this.raioOutput.val(this.motor.escala);
-                        this.raioSlider.slider("value", this.motor.escala);
+                        this.raioRange.val(this.motor.escala);
                         this.larguraOutput.val(this.motor.larguraLinha);
-                        this.larguraSlider.slider("value", this.motor.larguraLinha * 10);
+                        this.larguraRange.val(this.motor.larguraLinha * 10);
                         this.sentidoRadio.find("input[type='radio']").removeAttr('checked').prop('checked', false);
                         this.sentidoRadio.find("input[type='radio'][value='"+this.motor.sentido+"']").attr('checked', 'checked').prop('checked', true);
                         this.sentidoRadio.buttonset("refresh");
@@ -386,12 +374,12 @@ if (isset($requisicao)) {
                     this.espacoSelect.val(0);
                     this.ordemSelect.val("-");
                     this.fragmentosOutput.val(FRAGMENTOS);
-                    this.fragmentosSlider.slider("value", FRAGMENTOS);
+                    this.fragmentosRange.val(FRAGMENTOS);
                     this.corInput.val(COR);
                     this.raioOutput.val(ESCALA);
-                    this.raioSlider.slider("value", ESCALA);
+                    this.raioRange.val(ESCALA);
                     this.larguraOutput.val(LARGURA_LINHA);
-                    this.larguraSlider.slider("value", LARGURA_LINHA*10);
+                    this.larguraRange.val(LARGURA_LINHA*10);
                     this.sentidoRadio.find("input[type='radio']").removeAttr('checked').prop('checked', false);
                     this.sentidoRadio.find("input[type='radio'][value='"+SENTIDO+"']").attr('checked', 'checked').prop('checked', true);
                     this.sentidoRadio.buttonset("refresh");
@@ -444,12 +432,12 @@ if (isset($requisicao)) {
                 EditMotor.prototype.setModo = function (modo) {
                     if (modo == "Ponto") {
                         this.corInput.parent().parent().show();
-                        this.larguraSlider.parent().parent().parent().parent().parent().parent().show();
+                        this.larguraRange.parent().parent().parent().parent().parent().parent().show();
                         this.dialog.parent().find("button[name='bt-redefinir']").show();
                     }
                     else if (modo == "Plano") {
                         this.corInput.parent().parent().hide();
-                        this.larguraSlider.parent().parent().parent().parent().parent().parent().hide();
+                        this.larguraRange.parent().parent().parent().parent().parent().parent().hide();
                         this.dialog.parent().find("button[name='bt-redefinir']").hide();
                     }
                 };
@@ -513,28 +501,22 @@ if (isset($requisicao)) {
                         _this.atualizarListaOrdem();
                         motores.printHTML();
                     });
-                    this.fragmentosSlider.slider({
-                        slide: function (event, ui) {
-                            _this.fragmentosOutput.val(ui.value);
-                            _this.motor.fragmentos = parseInt(ui.value);
-                        }
-                    });
+                    this.fragmentosRange[0].oninput =  function () {
+                        _this.fragmentosOutput.val(this.value);
+                        _this.motor.fragmentos = parseInt(this.value);
+                    };
                     this.corInput.bind("change", function (){
                         _this.motor.cor = this.value;
                         _this.motor.ponto.editSVG(null, this.value);
                     });
-                    this.raioSlider.slider({
-                        slide: function (event, ui) {
-                            _this.raioOutput.val(ui.value);
-                            _this.motor.escala = parseInt(ui.value);
-                        }
-                    });
-                    this.larguraSlider.slider({
-                        slide: function (event, ui) {
-                            _this.larguraOutput.val(parseInt(ui.value)/10);
-                            _this.motor.larguraLinha = parseInt(ui.value)/10;
-                        }
-                    });
+                    this.raioRange[0].oninput =  function () {
+                        _this.raioOutput.val(this.value);
+                        _this.motor.escala = parseInt(this.value);
+                    };
+                    this.larguraRange[0].oninput =  function () {
+                        _this.larguraOutput.val(parseInt(this.value)/10);
+                        _this.motor.larguraLinha = parseInt(this.value)/10;
+                    };
                     this.sentidoRadio.find("input[type='radio']").bind("click", function () {
                         _this.motor.sentido = JSON.parse(this.value);
                     });
@@ -544,22 +526,16 @@ if (isset($requisicao)) {
                     var _this = this;
                     this.espacoSelect.unbind("change");
                     this.ordemSelect.unbind("change");
-                    this.fragmentosSlider.slider({
-                        slide: function (event, ui) {
-                            _this.fragmentosOutput.val(ui.value);
-                        }
-                    });
+                    this.fragmentosRange[0].oninput = function () {
+                        _this.fragmentosOutput.val(this.value);
+                    };
                     this.corInput.unbind("change");
-                    this.raioSlider.slider({
-                        slide: function (event, ui) {
-                            _this.raioOutput.val(ui.value);
-                        }
-                    });
-                    this.larguraSlider.slider({
-                        slide: function (event, ui) {
-                            _this.larguraOutput.val(parseInt(ui.value)/10);
-                        }
-                    });
+                    this.raioRange[0].oninput =  function () {
+                        _this.raioOutput.val(this.value);
+                    };
+                    this.larguraRange[0].oninput =  function () {
+                        _this.larguraOutput.val(parseInt(this.value)/10);
+                    };
                     this.sentidoRadio.find("input[type='radio']").unbind("click");
                 };
                 

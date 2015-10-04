@@ -20,8 +20,8 @@ if (isset($requisicao)) {
                         <td><input type="number" class="form-control" placeholder="Search for..."></td>
                         <td><button id="botaoAplicarPulsante">Aplicar</button></td>-->
                 <button id="botaoTempoReset" class="botao-icon">Voltar ao Padrão</button>
-                <label for="amount-tempo">Intervalo:</label><input type="text" id="amount-tempo" style="width: 60px; text-align: center" value="" readonly></input>
-                <div id="slider-tempo" style="width: calc(100% - 10px); margin: auto;"></div>
+                <label for="amount-tempo">Intervalo:</label><input type="text" id="amount-tempo" style="width: 60px; text-align: center" value="" readonly/>
+                <input id="range-tempo" type="range" style="width: calc(100% - 10px); margin: auto;" />
                 </tr>
             </table>
         </div>
@@ -46,7 +46,7 @@ if (isset($requisicao)) {
                 ContadorPulsos.prototype.reset = function () {
                     this.i = 0;
                     $(this.textExibicao).val(0);
-                }
+                };
 
                 ContadorPulsos.prototype.reestabelecer = function () {
                     if (this.pulso.pulsoID)
@@ -59,12 +59,12 @@ if (isset($requisicao)) {
                             $(eu.textExibicao).val(eu.i);
                         }, 0);
                     }
-                }
+                };
 
                 ContadorPulsos.prototype.cancelar = function () {
-                    this.pulso.pulsante.delAcao(this.pulso.pulsoID)
+                    this.pulso.pulsante.delAcao(this.pulso.pulsoID);
                     this.pulso.pulsoID = null;
-                }
+                };
 
                 return ContadorPulsos;
 
@@ -111,23 +111,22 @@ if (isset($requisicao)) {
 
             $("button#botaoTempoReset").button({
                 icons: {primary: "ui-icon-circle-close"},
-                text: false,
+                text: false
             }).click(function () {
-                $("#slider-tempo").slider("value", INTERVALO_TEMPO_PULSOS / 10);
+                document.getElementById("range-tempo").value = INTERVALO_TEMPO_PULSOS / 10;
                 $("#amount-tempo").val((INTERVALO_TEMPO_PULSOS) + "ms");
                 pulsante.intervalo = INTERVALO_TEMPO_PULSOS;
             });
 
-            $("#slider-tempo").slider({
-                range: "min",
-                value: pulsante.intervalo / 10,
-                min: 1,
-                max: 50,
-                slide: function (event, ui) {
-                    $("#amount-tempo").val((ui.value * 10) + "ms");
-                    pulsante.intervalo = ui.value * 10;
-                }
-            });
+            with (document.getElementById("range-tempo")) {
+                setAttribute("min", 1);
+                setAttribute("max", 50);
+                setAttribute("value", pulsante.intervalo / 10);
+                oninput = function () {
+                    $("#amount-tempo").val((this.value * 10) + "ms");
+                    pulsante.intervalo = this.value * 10;
+                };
+            }
             $("#amount-tempo").val(pulsante.intervalo + "ms");
         </script>
         <?php
