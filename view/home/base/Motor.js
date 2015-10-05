@@ -2,11 +2,11 @@ var Motor;
 
 Motor = (function () {
 
-    function Motor(plano, planoRoot, caneta, pontoInicial, intervaloPulsos, fragmentos, cor, escala, larguraLinha, sentido) {
+    function Motor(plano, planoRoot, pincel, pontoInicial, intervaloPulsos, fragmentos, cor, escala, larguraLinha, sentido) {
 
         this.plano = plano;
         this.planoRoot = planoRoot ? planoRoot : plano;
-        this.caneta = caneta;
+        this.pincel = pontoInicial instanceof Ponto ? pincel : null;
         this.ponto = pontoInicial;
 
         this.pulso = null; //{pulsoID: pulsoID, pulsante: pulsante, ordemBack: 1, ligado: true}
@@ -19,21 +19,23 @@ Motor = (function () {
         this.sentido = typeof sentido == "boolean" ? sentido : SENTIDO;
     }
 
-    Motor.prototype.ligar = function (pulsante) {
+    Motor.prototype.ligar = function (pulsante, hidePontos) {
         if (this.isLigado() || !(pulsante instanceof Pulsante))
             return;
         
-        if (this.ponto instanceof Ponto)
-            this.planoRoot.getSVG().appendChild(this.ponto.getSVG());
-        else if (this.ponto instanceof Plano)
-            this.plano.getSVG().appendChild(this.ponto.getSVG());
+        if (!hidePontos) {
+            if (this.ponto instanceof Ponto)
+                this.planoRoot.getSVG().appendChild(this.ponto.getSVG());
+            else if (this.ponto instanceof Plano)
+                this.plano.getSVG().appendChild(this.ponto.getSVG());
+        }
 
         var motor = this;
         var pulsoID = pulsante.novaAcao(function () {
             motor.mover();
             if (motor.ponto instanceof Ponto) {
                 motor.desenhar();
-                motor.caneta.set(motor.ponto.x, motor.ponto.y);
+                motor.pincel.set(motor.ponto.x, motor.ponto.y);
             }
         }, this.intervaloPulsos);
         this.pulso = {
@@ -43,7 +45,7 @@ Motor = (function () {
             ligado: true, 
             getOrdem: function () {
                 var ret = pulsante.ordenador.indexOf(pulsoID); 
-                return ret < 0 ? "-" : ret;
+                return ret < 0 ? "" : ret;
             },
             getTotal: function () {
                 return pulsante.ordenador.length -1;
@@ -68,9 +70,12 @@ Motor = (function () {
     };
     
     Motor.prototype.mudarOrdem = function (ordem) {
-        if (ordem && typeof ordem == "number" && ordem < this.pulso.pulsante.ordenador.length) {
-            if (this.isLigado()) 
+        if (ordem && typeof ordem == "number" && (ordem <= this.pulso.pulsante.ordenador.length)) {
+            if (this.isLigado()) {
+                if (ordem == this.pulso.pulsante.ordenador.length)
+                    return false;
                 this.pulso.pulsante.novaOrdem(this.pulso.pulsoID, ordem);
+            }
             else 
                 this.pausar(ordem);
             return true;
@@ -115,13 +120,15 @@ Motor = (function () {
         if (this.larguraLinha <= 0)
             return;
         if (this.plano == this.planoRoot) {
-            var svgSegmento = new Segmento(this.caneta, this.ponto, this.cor, this.larguraLinha).getSVG();
+            var svgSegmento = new Segmento(this.pincel, this.ponto, this.cor, this.larguraLinha).getSVG();
+            $(svgSegmento).attr("class","motor_" + this.pulso.pulsoID);
             this.plano.getSVG().appendChild(svgSegmento);
         }
         else {
             var transform = new Transform(this.plano);
             transform.pontar(this.ponto);
-            var svgSegmento = new Segmento(this.caneta, this.ponto, this.cor, this.larguraLinha).getSVG();
+            var svgSegmento = new Segmento(this.pincel, this.ponto, this.cor, this.larguraLinha).getSVG();
+            $(svgSegmento).attr("class","motor_" + this.pulso.pulsoID);
             this.planoRoot.getSVG().appendChild(svgSegmento);
         }
     };
@@ -135,10 +142,13 @@ Motor = (function () {
             return null;
         var tr = document.createElement("tr");
         tr.setAttribute("value", this.pulso.pulsoID);
+        var ordem = this.pulso.getOrdem();
         tr.innerHTML = "<td>"+this.pulso.pulsoID+"</td>" + 
-                "<td>"+this.pulso.getOrdem()+"</td>" +
+                "<td>"+(ordem ? ordem : "-")+"</td>" +
                 "<td>"+this.ponto.constructor.name+"</td>" +
                 //'<td><input type="radio" name="group1" value="Milk" /></td>' +
+                "<td></td>" +
+                "<td></td>" +
                 '<td><button class="botao-icon botao-select-motor-pause">Iniciar/Pausar</button></td>' +
                 '<td><button class="botao-icon botao-select-motor-edit">Editar</button></td>' +
                 '<td><button class="botao-icon botao-select-motor-remove">Remover</button></td>';
@@ -152,8 +162,11 @@ Motor = (function () {
 /*
  var planoG = new Plano (0,0);
  
- motores.novoMotor( new Motor(planoPrincipal,planoPrincipal,caneta,planoG) );
- motores.novoMotor( new Motor(planoG,planoPrincipal,caneta,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
- motores.novoMotor( new Motor(planoG,planoPrincipal,caneta,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
+ motores.novoMotor( new Motor(planoPrincipal,planoPrincipal,pincel,planoG) );
+ motores.novoMotor( new Motor(planoG,planoPrincipal,pincel,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
+ motores.novoMotor( new Motor(planoG,planoPrincipal,pincel,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
+ 
+ for (var raio = 300; raio > 0; raio -= 10)
+    motores.novoMotor(new Motor(planoPrincipal, planoPrincipal, motores.getPincel(0), new Ponto(0,raio), 0, 6, COR, raio));
  
  */

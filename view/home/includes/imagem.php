@@ -6,9 +6,7 @@ if (isset($requisicao)) {
         ?>
         <div class="panel-heading">Salvar Arquivos</div>
         <div class="panel-body">
-            <input id="botao-check-pontos" type="checkbox" class="checkbox-panel"/>
-            <label for="botao-check-pontos" style="margin-right: 20px;">Mostrar Pontos</label>
-            <button id="botao-gerar-imagem" class="bt-padrao">Gerar PNG</button>
+            <button id="botao-gerar-imagem" style="width: 150px">Gerar Imagem</button>
             <!--<button id="botao-limpar-imagem" class="bt-padrao">Limpar</button>-->
         </div>
         <?php
@@ -22,16 +20,9 @@ if (isset($requisicao)) {
         ?> 
         <script>
 
-            $("#botao-gerar-imagem").click(function () {
+            $("#botao-gerar-imagem").button().click(function () {
                 var canvas;
-                var htmlSVG;
-                if ($("#botao-check-pontos")[0].checked)
-                    htmlSVG = $("#palco").html().replace(/>\s+/g, ">").replace(/\s+</g, "<").replace(" xlink=", " xmlns:xlink=").replace(/\shref=/g, " xlink:href=");
-                else {
-                    motores.limparPontosPlano();
-                    htmlSVG = $("#palco").html().replace(/>\s+/g, ">").replace(/\s+</g, "<").replace(" xlink=", " xmlns:xlink=").replace(/\shref=/g, " xlink:href=");
-                    motores.colocarPontosPlano();
-                }
+                var htmlSVG = $("#palco").html().replace(/>\s+/g, ">").replace(/\s+</g, "<").replace(" xlink=", " xmlns:xlink=").replace(/\shref=/g, " xlink:href=");
                 $("#gerar-imagem").html("<canvas id=\"canvas\" width=\"<?php echo $width; ?>px\" height=\"<?php echo $height; ?>px\"></canvas> <img id=\"imagem\" />");
                 canvas = document.getElementById("canvas");
                 canvas.getContext("2d").translate(<?php echo $width/2; ?>,<?php echo $height/2; ?>);

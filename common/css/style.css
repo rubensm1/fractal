@@ -11,6 +11,10 @@ body {
 th {
     text-align: center;
 }
+hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
 output {
     padding-top: initial;
 }
