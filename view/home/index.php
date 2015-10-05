@@ -60,7 +60,7 @@ if (!isset($width) || !isset($height)) {
     var caneta = new Ponto(0, ESCALA);
     var pulsante = new Pulsante(INTERVALO_TEMPO_PULSOS);
 
-    $('button.bt-padrao').button().css('width', 120);
+    $('button.bt-padrao').button().css('width', 110);
     function dimensionar() {
         const H_BARSUP = $(".navbar.navbar-inverse.navbar-fixed-top").height();
         const MARGIN = 10;

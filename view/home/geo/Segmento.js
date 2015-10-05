@@ -3,15 +3,22 @@ var Segmento;
 Segmento = (function () {
 
     function Segmento(p1, p2, corLinha, larguraLinha) {
-        this.p1 = p1;
-        this.p2 = p2;
-
-        var svg = document.createElementNS("http://www.w3.org/2000/svg", 'line');
+        var svg;
         this.getSVG = function () {
             return svg;
         };
-        this.set();
-        this.editSVG(corLinha, larguraLinha);
+        if (p1 instanceof SVGElement && p1.nodeName == "line") {
+            this.p1 = new Ponto(p1.x1.baseVal.value,p1.y1.baseVal.value);
+            this.p2 = new Ponto(p1.x2.baseVal.value,p1.y2.baseVal.value);
+            svg = p1;
+        }
+        else {
+            this.p1 = p1;
+            this.p2 = p2;
+            svg = document.createElementNS("http://www.w3.org/2000/svg", 'line');
+            this.set();
+            this.editSVG(corLinha, larguraLinha);
+        }
     }
 
     Segmento.prototype.set = function (p1, p2) {
