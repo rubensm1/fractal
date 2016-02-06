@@ -167,6 +167,10 @@ Motor = (function () {
  motores.novoMotor( new Motor(planoG,planoPrincipal,pincel,new Ponto(0,150), INTERVALO_QUANT_PULSOS, FRAGMENTOS, COR, 150 ));
  
  for (var raio = 300; raio > 0; raio -= 10)
-    motores.novoMotor(new Motor(planoPrincipal, planoPrincipal, motores.getPincel(0), new Ponto(0,raio), 0, 6, COR, raio));
+    motores.novoMotor(new Motor(planoPrincipal, planoPrincipal, motores.getPincel(0), new Ponto(0,raio), 0, 6, colorante.getHexRGB(colorante.generateColor(raio,300)), raio));
  
  */
+
+//var ps = new Pulsante();
+//var tra = new Transform();
+//for (var i = 1; i <= 30; i++) eval("ps.novaAcao(function(){$('line.motor_"+i+"').each(function(i,e){tra.aplicar(e,tra.rotate(5),true)});},30,"+i+")")

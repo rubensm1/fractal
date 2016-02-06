@@ -48,9 +48,9 @@ Pulsante = (function () {
         this.ligado = false;
     };
 
-    Pulsante.prototype.novaAcao = function (funcao, deltha) {
+    Pulsante.prototype.novaAcao = function (funcao, deltha, startAt) {
         if (typeof funcao === "function" && typeof deltha === "number") {
-            this.acoes[this.contAcoes] = {funcao: funcao, deltha: deltha, i: 0};
+            this.acoes[this.contAcoes] = {funcao: funcao, deltha: deltha, i: 0, startAt: startAt};
             this.ordenador.push(this.contAcoes);
             return this.contAcoes++;
         }
@@ -70,7 +70,10 @@ Pulsante = (function () {
 
     Pulsante.prototype.acao = function () {
         for (var i in this.ordenador) {
-            if (this.acoes[this.ordenador[i]].deltha === this.acoes[this.ordenador[i]].i) {
+            if(this.acoes[this.ordenador[i]].startAt) {
+                this.acoes[this.ordenador[i]].startAt--;
+            }
+            else if (this.acoes[this.ordenador[i]].deltha === this.acoes[this.ordenador[i]].i) {
                 this.acoes[this.ordenador[i]].funcao();
                 this.acoes[this.ordenador[i]].i = 0;
             }

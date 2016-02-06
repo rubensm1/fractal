@@ -6,18 +6,18 @@ Transform = (function () {
     function Transform(matrix) {
 
         if (matrix == null)
-            this.matrix = document.createElementNS("http://www.w3.org/2000/svg", 'circle').getTransformToElement(document.createElementNS("http://www.w3.org/2000/svg", 'circle'));
+            this.matrix = document.createElementNS("http://www.w3.org/2000/svg", 'circle').getCTM(document.createElementNS("http://www.w3.org/2000/svg", 'circle'));
         else if (matrix instanceof SVGMatrix)
             this.matrix = matrix;
         else if (matrix instanceof Plano)
             this.matrix = matrix.getSVG().transform.baseVal.consolidate().matrix
         else
-            this.matrix = document.createElementNS("http://www.w3.org/2000/svg", 'circle').getTransformToElement(document.createElementNS("http://www.w3.org/2000/svg", 'circle'));
+            this.matrix = document.createElementNS("http://www.w3.org/2000/svg", 'circle').getCTM(document.createElementNS("http://www.w3.org/2000/svg", 'circle'));
 
         this.lastMatrix = null;
     }
 
-    Transform.MATRIX_IDENTIDADE = document.createElementNS("http://www.w3.org/2000/svg", 'circle').getTransformToElement(document.createElementNS("http://www.w3.org/2000/svg", 'circle'));
+    Transform.MATRIX_IDENTIDADE = document.createElementNS("http://www.w3.org/2000/svg", 'circle').getCTM(document.createElementNS("http://www.w3.org/2000/svg", 'circle'));
 
     Transform.prototype.set = function (matrix) {
         if (matrix instanceof SVGMatrix)
@@ -49,7 +49,7 @@ Transform = (function () {
             transformMatrix = referencia;
         }
         else if (referencia instanceof SVGElement) {
-            transformMatrix = referencia.getTransformToElement(elemento);
+            transformMatrix = referencia.getCTM(elemento);
         }
         else
             return;

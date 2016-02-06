@@ -580,6 +580,7 @@ if (isset($requisicao)) {
                     this.espacoSelect.bind("change", function (){
                         var valor = parseInt(this.value);
                         _this.motor.plano = motores.planos[valor];
+                        motores.printHTML();
                     });
                     this.ordemSelect.bind("change", function (){
                         var valor = parseInt(this.value);
@@ -697,24 +698,40 @@ if (isset($requisicao)) {
                     return "rgb(" + cor[0] + "," + cor[1] + "," + cor[2] + ")";
                 };
                 
+                Colorante.prototype.getIntRGB = function (cor) {
+                    if (cor == null && this.cor == null)
+                        return null;
+                    if (cor == null)
+                        cor = this.cor;
+                    return 65536 * cor[0] + 256 * cor[1] + cor[2];
+                };
+                
                 Colorante.prototype.toGenericRGB = function (rgb) {
                     var cores = null;
-                    rgb.replace(/\s/g,"");
-                    if (/^#?[0-9A-Fa-f]{6}$/.test(rgb)) {
-                        rgb = rgb.replace(/#/g,"");
-                        cores = [parseInt(rgb.slice(0,2),16) , parseInt(rgb.slice(2,4),16) , parseInt(rgb.slice(4,6),16)];
+                    if (typeof rgb == "number") {
+                        cores = [0,0,0];
+                        cores[2] = rgb % 256;
+                        cores[1] = ((rgb - cores[2]) / 256) % 256;
+                        cores[0] = ((rgb - (256 * cores[1]) - cores[2]) / 65536) % 256;
                     }
-                    else if (/rgb\(\d{1,3}\,\d{1,3}\,\d{1,3}\)/.test(rgb) || /rgba\(\d{1,3}\,\d{1,3}\,\d{1,3},(1|0|0.[0-9]+)\)/.test(rgb)) {
-                        //rgb = [].slice.call(arguments).join(",").replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
-                        var cores = rgb.replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
-                        for (var i = 0; i < 3; i++) {
-                            cores[i] = parseInt(cores[i]);
-                            if (!(cores[i] >= 0 && cores[i] < 256)) 
-                                return null;
+                    else if (typeof rgb == "string") {
+                        rgb.replace(/\s/g,"");
+                        if (/^#?[0-9A-Fa-f]{6}$/.test(rgb)) {
+                            rgb = rgb.replace(/#/g,"");
+                            cores = [parseInt(rgb.slice(0,2),16) , parseInt(rgb.slice(2,4),16) , parseInt(rgb.slice(4,6),16)];
                         }
+                        else if (/rgb\(\d{1,3}\,\d{1,3}\,\d{1,3}\)/.test(rgb) || /rgba\(\d{1,3}\,\d{1,3}\,\d{1,3},(1|0|0.[0-9]+)\)/.test(rgb)) {
+                            //rgb = [].slice.call(arguments).join(",").replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
+                            var cores = rgb.replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
+                            for (var i = 0; i < 3; i++) {
+                                cores[i] = parseInt(cores[i]);
+                                if (!(cores[i] >= 0 && cores[i] < 256)) 
+                                    return null;
+                            }
+                        }
+                        else 
+                            return null;
                     }
-                    else 
-                        return null;
                     return cores;
                 };
                 
@@ -727,6 +744,31 @@ if (isset($requisicao)) {
                     for (var i = 0; i < 3; i++) 
                         corInv[i] = 255 - cor[i];
                     return corInv;
+                };
+                
+                Colorante.prototype.generateColor = function(parcial, total) {
+                    if (parcial < 0 || total <= 0)
+                        return null;
+                    if (parcial >= total)
+                        parcial = parcial % total;
+                    var all = [];
+                    var i, k = 0;
+                    /*for (i = 0; i < 255; i++, k++)
+                        all[k] = [i,0,0];*/
+                    for (i = 0; i < 255; i++, k++)
+                        all[k] = [255,i,0];
+                    for (i = 255; i > 0; i--, k++)
+                        all[k] = [i,255,0];
+                    for (i = 0; i < 255; i++, k++)
+                        all[k] = [0,255,i];
+                    for (i = 255; i > 0; i--, k++)
+                        all[k] = [0,i,255];
+                    for (i = 0; i < 255; i++, k++)
+                        all[k] = [i,0,255];
+                    for (i = 255; i > 0; i--, k++)
+                        all[k] = [255,0,i];
+                    return all[Math.round((parcial * all.length) / total)];
+                    //return this.toGenericRGB ( Math.round((parcial * 16777215) / total) );
                 };
                 
                 return Colorante;
