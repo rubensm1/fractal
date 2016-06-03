@@ -43,6 +43,15 @@ Segmento = (function () {
         svg.setAttribute("stroke", corLinha);
         svg.setAttribute("stroke-width", larguraLinha);
     };
+	
+	/**
+	 * 
+	 */
+	Segmento.prototype.parametrica = function (base, fragmentos) {
+		var x = base * (this.p2.x - this.p1.x) / fragmentos;
+		var y = base * (this.p2.y - this.p1.y) / fragmentos;
+		return new Ponto (x,y);		
+	}
 
     return Segmento;
 

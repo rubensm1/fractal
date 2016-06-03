@@ -17,6 +17,7 @@ Motor = (function () {
         this.escala = escala ? escala : ESCALA;
         this.larguraLinha = larguraLinha ? larguraLinha : LARGURA_LINHA;
         this.sentido = typeof sentido == "boolean" ? sentido : SENTIDO;
+		this.matar = false;
     }
 
     Motor.prototype.ligar = function (pulsante, hidePontos) {
@@ -107,13 +108,27 @@ Motor = (function () {
     };
 
     /*Motor.prototype.mover = function () {
-     var px, py;
-     px = this.numerador;
-     py = 0.01 *(px * px) - 300;
-     //py = -0.01 *(px * px) + 300;
-     //py = 0.00002*(px * px *px);
-     this.numerador < 220 ? this.numerador+=4 : this.numerador = -220;
-     this.ponto.set(px,py);
+		var px, py;
+		px = this.numerador;
+		py = 0.01 *(px * px) - 300;
+		//py = -0.01 *(px * px) + 300;
+		//py = 0.00002*(px * px *px);
+		this.numerador < 220 ? this.numerador+=4 : this.numerador = -220;
+		this.ponto.set(px,py);
+     }*/
+	
+	/*Motor.prototype.mover = function () {
+		var px, py;
+		px = 0;
+		py = this.escala - this.numerador;
+		
+		px = 2 * Math.sin(2 * Math.PI * (this.sentido ? this.escala : 360 - this.escala) / 360);
+		py = 2 * Math.cos(2 * Math.PI * (this.sentido ? this.escala : 360 - this.escala) / 360);
+		
+		this.numerador++;
+		this.ponto.set(px,py);
+		if (py == 0)
+			this.matar = true;
      }*/
 
     Motor.prototype.desenhar = function () {
@@ -131,6 +146,11 @@ Motor = (function () {
             $(svgSegmento).attr("class","motor_" + this.pulso.pulsoID);
             this.planoRoot.getSVG().appendChild(svgSegmento);
         }
+		if (this.matar) {
+			this.desligar();          //plano,          planoRoot,          pincel,        pontoInicial,     intervaloPulsos, fragmentos, cor, escala, larguraLinha, sentido
+			//motores.novoMotor(new Motor(planoPrincipal, planoPrincipal, new Ponto(0,raio), new Ponto(0,raio),       0,            10,     COR,  20,        0.5,       false));
+			//motores.novoMotor(new Motor(planoPrincipal, planoPrincipal, new Ponto(0,raio), new Ponto(0,raio),       0,            10,     COR,  20,        0.5,        true));
+		}
     };
 
     Motor.prototype.isLigado = function () {
