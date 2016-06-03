@@ -75,7 +75,8 @@ Pulsante = (function () {
             }
             else if (this.acoes[this.ordenador[i]].deltha === this.acoes[this.ordenador[i]].i) {
                 this.acoes[this.ordenador[i]].funcao();
-                this.acoes[this.ordenador[i]].i = 0;
+				if (this.acoes[this.ordenador[i]])
+					this.acoes[this.ordenador[i]].i = 0;
             }
             else
                 this.acoes[this.ordenador[i]].i++;
