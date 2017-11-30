@@ -18,11 +18,13 @@ if (!isset($width) || !isset($height)) {
     var ESCALA = <?php echo ($height < $width ? $height/2 : $width/2); ?>;
     var RAIO_PONTOS = 5;
     var SENTIDO = false;
+	var DIFF = 20;
     $("#input-dimensao-x").attr("placeholder", <?php echo $width; ?>);
     $("#input-dimensao-y").attr("placeholder", <?php echo $height; ?>);
 </script>
 <script type="text/javascript" src="view/home/geo/Ponto.js"></script>
 <script type="text/javascript" src="view/home/base/Transform.js"></script>
+<script type="text/javascript" src="view/home/geo/Reta.js"></script>
 <script type="text/javascript" src="view/home/geo/Segmento.js"></script>
 <script type="text/javascript" src="view/home/geo/Plano.js"></script>
 <script type="text/javascript" src="view/home/base/Pulsante.js"></script>
