@@ -10,7 +10,8 @@ Transform = (function () {
         else if (matrix instanceof SVGMatrix)
             this.matrix = matrix;
         else if (matrix instanceof Plano)
-            this.matrix = matrix.getSVG().transform.baseVal.consolidate().matrix
+            //this.matrix = matrix.getSVG().transform.baseVal.consolidate().matrix
+			this.matrix = matrix.getSVG().transform.baseVal.length > 0 ? matrix.getSVG().transform.baseVal.consolidate().matrix : matrix.getSVG().getCTM(document.createElementNS("http://www.w3.org/2000/svg", 'circle'));
         else
             this.matrix = document.createElementNS("http://www.w3.org/2000/svg", 'circle').getCTM(document.createElementNS("http://www.w3.org/2000/svg", 'circle'));
 
