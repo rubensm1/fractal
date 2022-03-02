@@ -133,7 +133,7 @@ if (isset($requisicao)) {
                     this.linhaSelecionada = null;
                 }
 
-                ListaMotores.prototype.novoMotor = function (param, pontoInicial) {
+                ListaMotores.prototype.novoMotor = function (param, pontoInicial, startAt) {
                     var motor;
                     if (param instanceof Motor) 
                         motor = param;
@@ -141,7 +141,7 @@ if (isset($requisicao)) {
                         motor = new Motor(param, this.planoPrincipal, this.getPincel(), pontoInicial);
                     else 
                         throw "Parâmetro Ilegal: " + param;
-                    motor.ligar(this.pulsante, !($("#botao-check-pontos")[0].checked));
+                    motor.ligar(this.pulsante, !($("#botao-check-pontos")[0].checked), startAt);
                     this.lista[motor.pulso.pulsoID] = motor;
                     if (motor.ponto instanceof Plano)
                         this.planos[motor.pulso.pulsoID] = motor.ponto;
@@ -776,6 +776,7 @@ if (isset($requisicao)) {
             })())();
             
             motores.printHTML();
+            palco.style.backgroundColor = colorante.getHexRGB(colorante.getInvertRGB(colorante.toGenericRGB(COR)));
         </script>
         <?php
     }

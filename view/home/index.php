@@ -1,8 +1,8 @@
 <?php
 global $width, $height;
 if (!isset($width) || !isset($height)) {
-    $width = 800;
-    $height = 600;
+    $width = 1200;
+    $height = 800;
 }
 ?>
 
@@ -30,6 +30,7 @@ if (!isset($width) || !isset($height)) {
 <script type="text/javascript" src="view/home/base/Pulsante.js"></script>
 <script type="text/javascript" src="view/home/base/Motor.js"></script>
 <script type="text/javascript" src="view/home/base/Arvore.js"></script>
+<script type="text/javascript" src="view/home/base/Gerador.js"></script>
 
 <table id="area-total-corpo" style="height: 100%; width: 100%;">
     <tr>
