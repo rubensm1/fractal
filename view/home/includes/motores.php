@@ -155,7 +155,11 @@ if (isset($requisicao)) {
                     if (!this.lista.hasOwnProperty(id))
                         throw "Motor não encontrado!";
                         
-                    if (motorEdit.motor != null && motorEdit.motor.pulso.pulsoID == id) { 
+                    if (
+                        motorEdit.motor != null &&
+                        motorEdit.motor.pulso != null &&
+                        motorEdit.motor.pulso.pulsoID == id
+                    ) {
                         motorEdit.dialog.dialog("close");
                         motorEdit.atualizarListaOrdem();
                         motorEdit.atualizarListaEspacos();
