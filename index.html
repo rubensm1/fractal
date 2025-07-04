@@ -8,24 +8,24 @@
         <title>:) - home</title>
 
         <!-- CSS -->
-        <link href="./files/jquery-ui.min.css" rel="stylesheet">
-        <link href="./files/bootstrap.min.css" rel="stylesheet">
-        <link href="./files/style.css" rel="stylesheet">
-        <link href="./files/estilo-svg-png.css" rel="stylesheet">
+        <link href="files/jquery-ui.min.css" rel="stylesheet">
+        <link href="files/bootstrap.min.css" rel="stylesheet">
+        <link href="files/style.css" rel="stylesheet">
+        <link href="files/estilo-svg-png.css" rel="stylesheet">
 
         <!-- Javascript -->
-        <script src="./files/jquery.min.js"></script>
-        <script src="./files/bootstrap.min.js"></script>
-        <script src="./files/jquery-ui.min.js"></script>
+        <script src="files/jquery.min.js"></script>
+        <script src="files/bootstrap.min.js"></script>
+        <script src="files/jquery-ui.min.js"></script>
         <!-- http://igorescobar.github.io/jQuery-Mask-Plugin/ -->
-        <script src="./files/jquery.mask.min.js"></script>
+        <script src="files/jquery.mask.min.js"></script>
 
 
-        <script type="text/javascript" src="./files/rgbcolor.js"></script> 
-        <script type="text/javascript" src="./files/canvg.js"></script>
+        <script type="text/javascript" src="files/rgbcolor.js"></script> 
+        <script type="text/javascript" src="files/canvg.js"></script>
 
-        <script src="./files/view.js"></script>
-        <script src="./files/home.js"></script>
+        <script src="files/view.js"></script>
+        <script src="files/home.js"></script>
 
         <script>
             jQuery.fn.serializeObject = function () {
@@ -277,19 +277,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="http://localhost:8080/">Home</a></li>
+                <li><a href="#">Home</a></li>
             </ul>
-            <form class="navbar-form navbar-right" action="http://localhost:8080/index.php?view=home&amp;action=index&amp;method=true" method="POST">
-                <div class="form-group">
-                    <label>Dimensão:</label>
-                    <input id="input-dimensao-x" name="width" type="number" class="form-control" min="100" max="5000" title="Largura da Área de Desenho em px" required="" placeholder="1200">
-                    <label>X</label>
-                    <input id="input-dimensao-y" name="height" type="number" class="form-control" min="100" max="5000" title="Altura da Área de Desenho em px" required="" placeholder="800">
-                    <label> </label>
-                </div>
-                <label> </label>
-                <button type="submit" class="btn btn-default">OK</button>
-            </form>
         </div><!--/.nav-collapse -->
     </div>
 </nav>
@@ -311,15 +300,15 @@
     $("#input-dimensao-x").attr("placeholder", 1200);
     $("#input-dimensao-y").attr("placeholder", 800);
 </script>
-<script type="text/javascript" src="./files/Ponto.js"></script>
-<script type="text/javascript" src="./files/Transform.js"></script>
-<script type="text/javascript" src="./files/Reta.js"></script>
-<script type="text/javascript" src="./files/Segmento.js"></script>
-<script type="text/javascript" src="./files/Plano.js"></script>
-<script type="text/javascript" src="./files/Pulsante.js"></script>
-<script type="text/javascript" src="./files/Motor.js"></script>
-<script type="text/javascript" src="./files/Arvore.js"></script>
-<script type="text/javascript" src="./files/Gerador.js"></script>
+<script type="text/javascript" src="files/Ponto.js"></script>
+<script type="text/javascript" src="files/Transform.js"></script>
+<script type="text/javascript" src="files/Reta.js"></script>
+<script type="text/javascript" src="files/Segmento.js"></script>
+<script type="text/javascript" src="files/Plano.js"></script>
+<script type="text/javascript" src="files/Pulsante.js"></script>
+<script type="text/javascript" src="files/Motor.js"></script>
+<script type="text/javascript" src="files/Arvore.js"></script>
+<script type="text/javascript" src="files/Gerador.js"></script>
 
 <table id="area-total-corpo" style="height: 100%; width: 100%;">
     <tbody><tr>
@@ -327,15 +316,15 @@
             <div class="panel panel-jquery" style="overflow: auto; margin: 10px 5px 10px 10px; width: inherit; height: inherit;">
                         <div class="panel-heading">Desenho</div>
         <div class="panel-body">
-            <button id="botaoIn" class="bt-padrao ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" style="width: 110px;"><span class="ui-button-text">Iniciar</span></button>
-            <button id="botaoSt" class="bt-padrao ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" style="width: 110px;"><span class="ui-button-text">Parar</span></button>
-            <button id="botaoCl" class="bt-padrao ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" style="width: 110px;"><span class="ui-button-text">Limpar</span></button>
+            <button id="botaoIn" class="bt-padrao">Iniciar</button>
+            <button id="botaoSt" class="bt-padrao">Parar</button>
+            <button id="botaoCl" class="bt-padrao">Limpar</button>
             <hr>
-            <input id="botao-check-pontos" checked="" type="checkbox" class="checkbox-panel">
+            <input id="botao-check-pontos" checked type="checkbox" class="checkbox-panel"/>
             <label for="botao-check-pontos" style="margin-right: 20px;">Mostrar Pontos</label>
-                        <button id="botaoAvancado" class="bt-padrao ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" style="width: 110px;"><span class="ui-button-text">Avançado</span></button>
-                </div>
-                                <div class="panel-heading">Controles de Tempo</div>
+            <button id="botaoAvancado" class="bt-padrao">Avançado</button>
+        </div>
+         <div class="panel-heading">Controles de Tempo</div>
         <div class="panel-body">
             <table style="margin: auto;">
                 <tbody><tr>
@@ -383,16 +372,104 @@
         <td style="width: 1323px; height: 696px;">
             <div class="panel panel-jquery" style="overflow: auto; margin: 10px 10px 10px 5px; width: inherit; height: inherit; background-color: whitesmoke;">
                 <div id="container-svg" style="height: 100%;">
-                    <svg id="palco" width="1200px" height="800px" viewBox="-600 -400 1200 800" style="border: 1px solid rgb(211, 211, 211); background-color: rgb(255, 255, 255);">
-
-                    <g><circle cx="0" cy="0" r="10" fill="#000000" stroke="#ffffff" opacity="0.25"></circle></g></svg>
+                    <svg id="palco" width="1200px" height="800px" viewBox="-600 -400 1200 800" style="border: 1px solid rgb(211, 211, 211); background-color: rgb(255, 255, 255);"></svg>
                 </div>
             </div>
         </td>
     </tr>
-</tbody></table>
+</tbody>
+</table>
 
-        
+    <div id="gerar-imagem" class="ui-dialog-content ui-widget-content">
+        <canvas id="canvas" width="1200px" height="800px"></canvas> <img id="imagem">
+    </div>
+    <div id="dialog-motores">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ordem</th>
+                    <th>Tipo</th>
+                    <th>Espaço</th>
+                    <th>Pincel</th>
+                    <th>Pausar</th>
+                    <th>Editar</th>
+                    <th>Remover</th>
+                </tr>
+            </thead>
+            <tbody id="table-motores"></tbody>
+        </table>
+    </div>
+    <div id="dialog-edit-motor">
+        <!--<form id="form-edit-motor">-->
+            <table class="table table-bordered table-former">
+                <thead>
+                    <tr>
+                        <th>Motor:</th>
+                        <th><output name="id"></output></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tipo:</td>
+                        <td><select name="tipo"><option value="Ponto">Ponto</option><option value="Plano">Plano</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>Espaço:</td>
+                        <td><select name="espaco"><option value="0">Raiz</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>Ordem:</td>
+                        <td><select name="ordem"><option value="">-</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>Pincel:</td>
+                        <td><select name="pincel"><option value="0">+</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>Fragmentos:</td>
+                        <td style="vertical-align: middle;">
+                            <table style="width: 100%;"><tr>
+                                <td style="width: 35px; text-align: left;"><output name="value-fragmentos" /></td>
+                                <td><input name="range-fragmentos" min="2" max="1000" type="range" style="width: calc(100% - 10px); margin: auto;" /></td>
+                            </tr></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Cor:</td>
+                        <td><input name="cor" type="color" /></td>
+                    </tr>
+                    <tr>
+                        <td>Raio:</td>
+                        <td style="vertical-align: middle;">
+                            <table style="width: 100%;"><tr>
+                                <td style="width: 35px; text-align: left;"><output name="value-raio" /></td>
+                                <td><input name="range-raio" min="0" type="range" style="width: calc(100% - 10px); margin: auto;" /></td>
+                            </tr></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Largura Linha:</td>
+                        <td style="vertical-align: middle;">
+                            <table style="width: 100%;"><tr>
+                                <td style="width: 35px; text-align: left;"><output name="value-largura" /></td>
+                                <td><input name="range-largura" min="0" max="30" type="range" style="width: calc(100% - 10px); margin: auto;" /></td>
+                            </tr></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Sentido:</td>
+                        <td style="vertical-align: middle;">
+                            <div name="radio-sentidos">
+                                <input type="radio" value="true" id="radio-sentido-horario" name="radio-sentido"><label for="radio-sentido-horario">Horário</label>
+                                <input type="radio" value="false" id="radio-sentido-antihorario" name="radio-sentido"><label for="radio-sentido-antihorario">Anti-horário</label>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <!--</form>-->
+    </div>       
                 
         
         
@@ -1410,98 +1487,7 @@
                 };
             }
         </script>
-                </div><div class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable" tabindex="-1" role="dialog" aria-describedby="dialog-motores" style="position: absolute; height: auto; width: 600px; top: 183px; left: 660px; display: none;" aria-labelledby="ui-id-1"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle"><span id="ui-id-1" class="ui-dialog-title">Motores</span><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close" role="button" title="Close"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span><span class="ui-button-text">Close</span></button></div><div id="dialog-motores" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 0px; max-height: none; height: 352.4px;">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Ordem</th>
-                        <th>Tipo</th>
-                        <th>Espaço</th>
-                        <th>Pincel</th>
-                        <th>Pausar</th>
-                        <th>Editar</th>
-                        <th>Remover</th>
-                    </tr>
-                </thead>
-                <tbody id="table-motores"><tr><td colspan="8"><button class="botao-icon botao-new-motor ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" title="Novo"><span class="ui-button-icon-primary ui-icon ui-icon-circle-plus"></span><span class="ui-button-text">Novo</span></button></td></tr></tbody>
-            </table>
-        </div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-dialog-buttons ui-draggable ui-resizable" tabindex="-1" role="dialog" aria-describedby="dialog-edit-motor" style="position: absolute; height: 400px; width: 600px; inset: 202px auto auto 50px; display: none; z-index: 1301;" aria-labelledby="ui-id-2"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle"><span id="ui-id-2" class="ui-dialog-title">Editar Motor</span><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close" role="button" title="Close"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span><span class="ui-button-text">Close</span></button></div><div id="dialog-edit-motor" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 0px; max-height: none; height: 280.4px;">
-            <!--<form id="form-edit-motor">-->
-                <table class="table table-bordered table-former">
-                    <thead>
-                        <tr>
-                            <th>Motor:</th>
-                            <th><output name="id">1</output></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Tipo:</td>
-                            <td><select name="tipo" disabled=""><option value="Ponto">Ponto</option><option value="Plano">Plano</option></select></td>
-                        </tr>
-                        <tr>
-                            <td>Espaço:</td>
-                            <td><select name="espaco"><option value="0">Raiz</option></select></td>
-                        </tr>
-                        <tr>
-                            <td>Ordem:</td>
-                            <td><select name="ordem"><option value="">-</option><option value="1">1</option></select></td>
-                        </tr>
-                        <tr>
-                            <td>Pincel:</td>
-                            <td><select name="pincel"><option value="1">1</option><option value="0">+</option></select></td>
-                        </tr>
-                        <tr>
-                            <td>Fragmentos:</td>
-                            <td style="vertical-align: middle;">
-                                <table style="width: 100%;"><tbody><tr>
-                                    <td style="width: 35px; text-align: left;"><output name="value-fragmentos">50</output></td>
-                                    <td><input name="range-fragmentos" min="2" max="1000" type="range" style="width: calc(100% - 10px); margin: auto;"></td>
-                                </tr></tbody></table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Cor:</td>
-                            <td><input name="cor" type="color"></td>
-                        </tr>
-                        <tr>
-                            <td>Raio:</td>
-                            <td style="vertical-align: middle;">
-                                <table style="width: 100%;"><tbody><tr>
-                                    <td style="width: 35px; text-align: left;"><output name="value-raio">400</output></td>
-                                    <td><input name="range-raio" min="0" type="range" style="width: calc(100% - 10px); margin: auto;" max="1200"></td>
-                                </tr></tbody></table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Largura Linha:</td>
-                            <td style="vertical-align: middle;">
-                                <table style="width: 100%;"><tbody><tr>
-                                    <td style="width: 35px; text-align: left;"><output name="value-largura">1</output></td>
-                                    <td><input name="range-largura" min="0" max="30" type="range" style="width: calc(100% - 10px); margin: auto;"></td>
-                                </tr></tbody></table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Sentido:</td>
-                            <td style="vertical-align: middle;">
-                                <div name="radio-sentidos" class="ui-buttonset">
-                                    <input type="radio" value="true" id="radio-sentido-horario" name="radio-sentido" class="ui-helper-hidden-accessible"><label for="radio-sentido-horario" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">Horário</span></label>
-                                    <input type="radio" value="false" id="radio-sentido-antihorario" name="radio-sentido" class="ui-helper-hidden-accessible" checked="checked"><label for="radio-sentido-antihorario" class="ui-button ui-widget ui-state-default ui-button-text-only ui-state-active ui-corner-right" role="button" aria-pressed="true"><span class="ui-button-text">Anti-horário</span></label>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            <!--</form>-->
-        </div><div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"><div class="ui-dialog-buttonset"><button type="button" name="bt-redefinir" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" style="width: 150px;"><span class="ui-button-text">Salvar Padrão</span></button><button type="button" name="bt-new-clear" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" style="width: 100px;"><span class="ui-button-text">Novo</span></button></div></div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable" tabindex="-1" role="dialog" aria-describedby="gerar-imagem" style="display: none; position: absolute;" aria-labelledby="ui-id-3"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle"><span id="ui-id-3" class="ui-dialog-title">Imagem PNG</span><button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close" role="button" title="Close"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span><span class="ui-button-text">Close</span></button></div>
-        <div id="gerar-imagem" class="ui-dialog-content ui-widget-content">
-            <canvas id="canvas" width="1200px" height="800px"></canvas> <img id="imagem">
-        </div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div>
-        
-        
-        
+                
         <script>
             $("#echo").dialog({
                 title: "Echo",
@@ -1536,4 +1522,5 @@
             $("input.input-time").mask("00:00:00");
         </script>
     
-</body></html>
+</body>
+</html>
